@@ -1,0 +1,3667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>丝路织梦·数韵中华 | 交互式数字文化体验</title>
+    <style>
+        /* ========== 全局变量与基础样式 ========== */
+        
+         :root {
+            --silk-gold: #d4a857;
+            --silk-red: #a8324b;
+            --silk-blue: #2c5f7c;
+            --silk-cream: #f4ecd8;
+            --silk-dark: #1a1410;
+            --silk-jade: #5a8a6e;
+            --ink: #2b2218;
+            --paper: #faf6ed;
+            --accent: #c8923a;
+            --shadow: 0 8px 32px rgba(26, 20, 16, .18);
+            --glow: 0 0 24px rgba(212, 168, 87, .45);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+        
+        html {
+            scroll-behavior: smooth
+        }
+        
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Noto Serif SC", serif;
+            background: var(--paper);
+            color: var(--ink);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+        
+         ::selection {
+            background: var(--silk-gold);
+            color: #fff
+        }
+        /* ========== 滚动进度指示 ========== */
+        
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--silk-gold), var(--silk-red), var(--silk-blue));
+            z-index: 9999;
+            transition: width .15s;
+            box-shadow: var(--glow);
+        }
+        /* ========== 导航 ========== */
+        
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(26, 20, 16, .85);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(212, 168, 87, .3);
+            transition: transform .4s;
+        }
+        
+        .nav.hide {
+            transform: translateY(-100%)
+        }
+        
+        .nav-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--silk-cream);
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+        
+        .logo-seal {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #e8c178, #a8324b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 0 12px rgba(168, 50, 75, .5);
+            border: 2px solid rgba(244, 236, 216, .3);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none
+        }
+        
+        .nav-links a {
+            color: rgba(244, 236, 216, .75);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all .3s;
+            letter-spacing: 1px;
+        }
+        
+        .nav-links a:hover {
+            color: var(--silk-gold);
+            background: rgba(212, 168, 87, .1)
+        }
+        /* ========== Hero 首屏 ========== */
+        
+        .hero {
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1410 0%, #2c1810 40%, #3a2418 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hero-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 5;
+            text-align: center;
+            color: var(--silk-cream);
+            padding: 0 24px;
+            animation: heroFade 2s ease-out;
+        }
+        
+        @keyframes heroFade {
+            from {
+                opacity: 0;
+                transform: translateY(40px)
+            }
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+        
+        .hero-title {
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 900;
+            letter-spacing: 8px;
+            margin-bottom: 16px;
+            background: linear-gradient(180deg, #f4ecd8 0%, #d4a857 50%, #a8324b 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 24px rgba(212, 168, 87, .3);
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(16px, 2.5vw, 22px);
+            letter-spacing: 6px;
+            color: rgba(244, 236, 216, .85);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+        
+        .hero-desc {
+            font-size: 14px;
+            color: rgba(244, 236, 216, .6);
+            max-width: 600px;
+            margin: 0 auto 48px;
+            letter-spacing: 2px;
+        }
+        
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 48px;
+            background: transparent;
+            border: 1px solid var(--silk-gold);
+            color: var(--silk-gold);
+            text-decoration: none;
+            font-size: 16px;
+            letter-spacing: 4px;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all .4s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(212, 168, 87, .2), transparent);
+            transform: translateX(-100%);
+            transition: transform .6s;
+        }
+        
+        .hero-cta:hover::before {
+            transform: translateX(100%)
+        }
+        
+        .hero-cta:hover {
+            background: var(--silk-gold);
+            color: var(--silk-dark)
+        }
+        
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(244, 236, 216, .5);
+            font-size: 12px;
+            letter-spacing: 3px;
+            animation: bounce 2s infinite;
+            text-align: center;
+        }
+        
+        .scroll-hint::after {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(180deg, rgba(244, 236, 216, .5), transparent);
+            margin: 12px auto 0
+        }
+        
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0)
+            }
+            50% {
+                transform: translateX(-50%) translateY(10px)
+            }
+        }
+        /* ========== 通用 Section ========== */
+        
+        .section {
+            padding: 120px 32px;
+            position: relative
+        }
+        
+        .section-inner {
+            max-width: 1280px;
+            margin: 0 auto
+        }
+        
+        .section-label {
+            display: inline-block;
+            font-size: 13px;
+            letter-spacing: 6px;
+            color: var(--silk-red);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            padding: 4px 16px;
+            border: 1px solid rgba(168, 50, 75, .3);
+            border-radius: 2px;
+        }
+        
+        .section-title {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 800;
+            color: var(--ink);
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+        
+        .section-title .accent {
+            color: var(--silk-gold)
+        }
+        
+        .section-desc {
+            font-size: 16px;
+            color: #6b5d4f;
+            max-width: 680px;
+            margin-bottom: 60px;
+            line-height: 1.9;
+        }
+        /* ========== 织锦交互区 - 核心创新 ========== */
+        
+        .weave-section {
+            background: linear-gradient(180deg, #faf6ed 0%, #f0e6d0 100%);
+            min-height: 100vh;
+        }
+        
+        .weave-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            margin-top: 40px;
+        }
+        
+        .weave-canvas-wrap {
+            position: relative;
+            aspect-ratio: 4/3;
+            background: var(--silk-dark);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(212, 168, 87, .3);
+        }
+        
+        #weaveCanvas {
+            display: block;
+            width: 100%;
+            height: 100%
+        }
+        
+        .weave-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .weave-intro h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: var(--ink);
+            font-weight: 700;
+        }
+        
+        .weave-intro p {
+            color: #6b5d4f;
+            line-height: 1.9;
+            margin-bottom: 24px
+        }
+        
+        .thread-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px
+        }
+        
+        .thread-btn {
+            padding: 10px 20px;
+            border: 1px solid rgba(168, 50, 75, .3);
+            background: #fff;
+            color: var(--ink);
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+            transition: all .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .thread-btn .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .thread-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow)
+        }
+        
+        .thread-btn.active {
+            background: var(--silk-dark);
+            color: var(--silk-cream);
+            border-color: var(--silk-gold);
+        }
+        
+        .weave-pattern-display {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e8dcc4;
+            font-size: 14px;
+            color: #6b5d4f;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .weave-stats {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px
+        }
+        
+        .stat-item {
+            text-align: center
+        }
+        
+        .stat-num {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--silk-red)
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #8a7d6b;
+            letter-spacing: 2px
+        }
+        /* ========== 丝路地图 - 文化交融可视化 ========== */
+        
+        .map-section {
+            background: linear-gradient(135deg, #1a1410 0%, #0d0a08 100%);
+            color: var(--silk-cream);
+        }
+        
+        .map-section .section-title {
+            color: var(--silk-cream)
+        }
+        
+        .map-section .section-desc {
+            color: rgba(244, 236, 216, .7)
+        }
+        
+        .map-section .section-label {
+            color: var(--silk-gold);
+            border-color: rgba(212, 168, 87, .3)
+        }
+        
+        .map-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: radial-gradient(ellipse at center, #2a1f15 0%, #0d0a08 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(212, 168, 87, .15);
+        }
+        
+        #mapSvg {
+            width: 100%;
+            height: 100%
+        }
+        
+        .map-legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(26, 20, 16, .8);
+            backdrop-filter: blur(10px);
+            padding: 16px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 168, 87, .2);
+            font-size: 12px;
+            color: rgba(244, 236, 216, .85);
+        }
+        
+        .map-legend h4 {
+            margin-bottom: 10px;
+            color: var(--silk-gold)
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0
+        }
+        
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 2px
+        }
+        
+        .map-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(26, 20, 16, .85);
+            backdrop-filter: blur(10px);
+            padding: 20px 24px;
+            border-radius: 8px;
+            max-width: 280px;
+            border: 1px solid rgba(212, 168, 87, .2);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all .4s;
+        }
+        
+        .map-info.show {
+            opacity: 1;
+            transform: none
+        }
+        
+        .map-info h4 {
+            color: var(--silk-gold);
+            margin-bottom: 8px;
+            font-size: 16px
+        }
+        
+        .map-info p {
+            font-size: 13px;
+            color: rgba(244, 236, 216, .8);
+            line-height: 1.6
+        }
+        /* ========== 非遗工坊 ========== */
+        
+        .craft-section {
+            background: linear-gradient(180deg, #f0e6d0 0%, #faf6ed 100%);
+        }
+        
+        .craft-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin-top: 40px;
+        }
+        
+        .craft-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all .4s;
+            border: 1px solid #e8dcc4;
+            position: relative;
+        }
+        
+        .craft-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(26, 20, 16, .25)
+        }
+        
+        .craft-visual {
+            aspect-ratio: 4/3;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #d4a857, #a8324b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .craft-visual svg {
+            width: 60%;
+            height: 60%;
+            opacity: .9
+        }
+        
+        .craft-card:nth-child(2) .craft-visual {
+            background: linear-gradient(135deg, #2c5f7c, #5a8a6e)
+        }
+        
+        .craft-card:nth-child(3) .craft-visual {
+            background: linear-gradient(135deg, #a8324b, #d4a857)
+        }
+        
+        .craft-card:nth-child(4) .craft-visual {
+            background: linear-gradient(135deg, #5a8a6e, #2c5f7c)
+        }
+        
+        .craft-body {
+            padding: 24px
+        }
+        
+        .craft-tag {
+            display: inline-block;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--silk-red);
+            padding: 2px 8px;
+            background: rgba(168, 50, 75, .08);
+            border-radius: 2px;
+            margin-bottom: 12px;
+        }
+        
+        .craft-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--ink)
+        }
+        
+        .craft-desc {
+            font-size: 13px;
+            color: #6b5d4f;
+            line-height: 1.7;
+            margin-bottom: 16px
+        }
+        
+        .craft-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--silk-blue);
+            font-weight: 600;
+        }
+        
+        .craft-action::after {
+            content: '→';
+            transition: transform .3s
+        }
+        
+        .craft-card:hover .craft-action::after {
+            transform: translateX(4px)
+        }
+        /* ========== 民族交融 - 时间轴 ========== */
+        
+        .timeline-section {
+            background: linear-gradient(135deg, #2c5f7c 0%, #1a3a4c 100%);
+            color: var(--silk-cream);
+        }
+        
+        .timeline-section .section-title {
+            color: var(--silk-cream)
+        }
+        
+        .timeline-section .section-desc {
+            color: rgba(244, 236, 216, .75)
+        }
+        
+        .timeline-section .section-label {
+            color: var(--silk-gold);
+            border-color: rgba(212, 168, 87, .3)
+        }
+        
+        .timeline {
+            position: relative;
+            margin-top: 60px;
+            padding: 40px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, transparent, var(--silk-gold), transparent);
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 32px;
+            align-items: center;
+            margin-bottom: 60px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all .8s;
+        }
+        
+        .timeline-item.visible {
+            opacity: 1;
+            transform: none
+        }
+        
+        .timeline-content {
+            background: rgba(26, 20, 16, .6);
+            backdrop-filter: blur(10px);
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 168, 87, .2);
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content:first-child {
+            text-align: right
+        }
+        
+        .timeline-item:nth-child(even) .timeline-content:last-child {
+            display: none
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content:last-child {
+            display: none
+        }
+        
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--silk-gold);
+            position: relative;
+            box-shadow: 0 0 16px rgba(212, 168, 87, .6);
+            border: 3px solid rgba(244, 236, 216, .3);
+        }
+        
+        .timeline-era {
+            font-size: 12px;
+            color: var(--silk-gold);
+            letter-spacing: 2px;
+            margin-bottom: 8px
+        }
+        
+        .timeline-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--silk-cream)
+        }
+        
+        .timeline-text {
+            font-size: 13px;
+            color: rgba(244, 236, 216, .75);
+            line-height: 1.7
+        }
+        /* ========== 乡村振兴 - 卡片 ========== */
+        
+        .rural-section {
+            background: linear-gradient(180deg, #faf6ed 0%, #f0e6d0 100%);
+        }
+        
+        .rural-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-top: 40px;
+        }
+        
+        .rural-card {
+            position: relative;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+        
+        .rural-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 40%, rgba(26, 20, 16, .95));
+            z-index: 2;
+        }
+        
+        .rural-bg {
+            position: absolute;
+            inset: 0;
+            transition: transform .6s;
+        }
+        
+        .rural-card:hover .rural-bg {
+            transform: scale(1.08)
+        }
+        
+        .rural-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 28px;
+            z-index: 3;
+            color: var(--silk-cream);
+        }
+        
+        .rural-region {
+            font-size: 12px;
+            color: var(--silk-gold);
+            letter-spacing: 3px;
+            margin-bottom: 8px
+        }
+        
+        .rural-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px
+        }
+        
+        .rural-text {
+            font-size: 13px;
+            color: rgba(244, 236, 216, .8);
+            line-height: 1.6
+        }
+        
+        .rural-tag {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 4px 12px;
+            background: rgba(212, 168, 87, .2);
+            border: 1px solid var(--silk-gold);
+            color: var(--silk-gold);
+            font-size: 11px;
+            letter-spacing: 2px;
+            border-radius: 2px;
+        }
+        /* ========== AR 预览 ========== */
+        
+        .ar-section {
+            background: radial-gradient(ellipse at center, #1a1410 0%, #0d0a08 100%);
+            color: var(--silk-cream);
+            text-align: center;
+        }
+        
+        .ar-section .section-title {
+            color: var(--silk-cream)
+        }
+        
+        .ar-section .section-desc {
+            color: rgba(244, 236, 216, .7);
+            margin-left: auto;
+            margin-right: auto
+        }
+        
+        .ar-section .section-label {
+            color: var(--silk-gold);
+            border-color: rgba(212, 168, 87, .3)
+        }
+        
+        .ar-demo {
+            position: relative;
+            max-width: 480px;
+            margin: 40px auto 0;
+            aspect-ratio: 9/16;
+            border-radius: 24px;
+            overflow: hidden;
+            background: linear-gradient(180deg, #2a1f15 0%, #1a1410 100%);
+            border: 2px solid rgba(212, 168, 87, .3);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, .5), var(--glow);
+        }
+        
+        .ar-scene {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+        
+        .ar-artifact {
+            width: 60%;
+            aspect-ratio: 1;
+            position: relative;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0) rotate(-2deg)
+            }
+            50% {
+                transform: translateY(-12px) rotate(2deg)
+            }
+        }
+        
+        .ar-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(244, 236, 216, .7);
+            font-size: 13px;
+            letter-spacing: 2px;
+        }
+        
+        .ar-scan-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--silk-gold), transparent);
+            top: 30%;
+            animation: scan 3s ease-in-out infinite;
+        }
+        
+        @keyframes scan {
+            0%,
+            100% {
+                top: 20%
+            }
+            50% {
+                top: 80%
+            }
+        }
+        /* ========== 真实AR扫描器 ========== */
+        
+        .ar-scanner {
+            position: relative;
+            max-width: 560px;
+            margin: 40px auto 0;
+            aspect-ratio: 9/16;
+            border-radius: 24px;
+            overflow: hidden;
+            background: linear-gradient(180deg, #2a1f15 0%, #1a1410 100%);
+            border: 2px solid rgba(212, 168, 87, .3);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, .5), var(--glow);
+        }
+        
+        .ar-video-wrap {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0d0a08;
+        }
+        
+        #arVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transform: scaleX(-1);
+        }
+        
+        #arCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transform: scaleX(-1);
+        }
+        
+        .ar-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(244, 236, 216, .6);
+            text-align: center;
+            padding: 24px;
+            gap: 16px;
+        }
+        
+        .ar-placeholder svg {
+            width: 80px;
+            height: 80px;
+            opacity: .5;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .ar-placeholder p {
+            font-size: 13px;
+            letter-spacing: 2px;
+            line-height: 1.8;
+            max-width: 280px;
+        }
+        
+        .ar-controls {
+            position: absolute;
+            bottom: 24px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            z-index: 10;
+        }
+        
+        .ar-btn {
+            padding: 12px 32px;
+            background: rgba(212, 168, 87, .95);
+            color: #1a1410;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all .3s;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .ar-btn:hover {
+            background: var(--silk-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 168, 87, .4);
+        }
+        
+        .ar-btn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .ar-btn.stop {
+            background: rgba(168, 50, 75, .95);
+            color: #fff;
+        }
+        
+        .ar-btn.stop:hover {
+            background: var(--silk-red);
+        }
+        
+        .ar-status {
+            position: absolute;
+            top: 16px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: var(--silk-gold);
+            font-size: 12px;
+            letter-spacing: 2px;
+            z-index: 10;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, .8);
+        }
+        
+        .ar-status .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--silk-gold);
+            margin-right: 6px;
+            animation: pulse-dot 1s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: .4;
+                transform: scale(1.3);
+            }
+        }
+        
+        .ar-result {
+            position: absolute;
+            bottom: 80px;
+            left: 16px;
+            right: 16px;
+            background: rgba(26, 20, 16, .92);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(212, 168, 87, .4);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: var(--silk-cream);
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all .4s;
+            text-align: left;
+        }
+        
+        .ar-result.show {
+            opacity: 1;
+            transform: none;
+        }
+        
+        .ar-result-label {
+            font-size: 11px;
+            color: var(--silk-gold);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+        
+        .ar-result-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--silk-cream);
+            margin-bottom: 8px;
+        }
+        
+        .ar-result-culture {
+            font-size: 13px;
+            color: rgba(244, 236, 216, .8);
+            line-height: 1.7;
+        }
+        
+        .ar-result-confidence {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 11px;
+            padding: 2px 10px;
+            background: rgba(90, 138, 110, .25);
+            border: 1px solid var(--silk-jade);
+            color: var(--silk-jade);
+            border-radius: 2px;
+        }
+        
+        .ar-error {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--silk-red);
+            font-size: 14px;
+            text-align: center;
+            padding: 24px;
+            background: rgba(13, 10, 8, .95);
+            z-index: 20;
+        }
+        
+        .ar-loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(13, 10, 8, .9);
+            z-index: 15;
+            color: var(--silk-gold);
+            font-size: 14px;
+            letter-spacing: 2px;
+            gap: 16px;
+        }
+        
+        .ar-loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(212, 168, 87, .2);
+            border-top-color: var(--silk-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .ar-tips {
+            max-width: 560px;
+            margin: 24px auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        
+        .ar-tip {
+            background: rgba(26, 20, 16, .5);
+            border: 1px solid rgba(212, 168, 87, .2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            text-align: center;
+        }
+        
+        .ar-tip-icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+        
+        .ar-tip-text {
+            font-size: 11px;
+            color: rgba(244, 236, 216, .6);
+            letter-spacing: 1px;
+            line-height: 1.5;
+        }
+        /* ========== AI 配置面板 ========== */
+        
+        .ai-config-bar {
+            max-width: 560px;
+            margin: 32px auto 0;
+            background: rgba(26, 20, 16, .7);
+            border: 1px solid rgba(212, 168, 87, .3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .ai-config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .ai-config-title {
+            font-size: 13px;
+            color: var(--silk-gold);
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        
+        .ai-config-toggle {
+            background: none;
+            border: 1px solid rgba(212, 168, 87, .4);
+            color: var(--silk-cream);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+        
+        .ai-config-toggle:hover {
+            border-color: var(--silk-gold);
+            color: var(--silk-gold);
+        }
+        
+        .ai-config-body {
+            display: none;
+            padding-top: 12px;
+            border-top: 1px solid rgba(212, 168, 87, .15);
+        }
+        
+        .ai-config-body.open {
+            display: block;
+        }
+        
+        .ai-config-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .ai-config-input {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(13, 10, 8, .8);
+            border: 1px solid rgba(212, 168, 87, .3);
+            border-radius: 6px;
+            color: var(--silk-cream);
+            font-size: 13px;
+            font-family: monospace;
+            outline: none;
+        }
+        
+        .ai-config-input:focus {
+            border-color: var(--silk-gold);
+        }
+        
+        .ai-config-select {
+            padding: 10px 14px;
+            background: rgba(13, 10, 8, .8);
+            border: 1px solid rgba(212, 168, 87, .3);
+            border-radius: 6px;
+            color: var(--silk-cream);
+            font-size: 12px;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        .ai-config-select:focus {
+            border-color: var(--silk-gold);
+        }
+        
+        .ai-config-btn {
+            padding: 10px 20px;
+            background: var(--silk-gold);
+            color: #1a1410;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+        
+        .ai-config-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .ai-config-btn.secondary {
+            background: transparent;
+            border: 1px solid rgba(244, 236, 216, .3);
+            color: var(--silk-cream);
+        }
+        
+        .ai-config-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        .ai-config-status.ok {
+            background: rgba(90, 138, 110, .15);
+            color: var(--silk-jade);
+            border: 1px solid rgba(90, 138, 110, .3);
+        }
+        
+        .ai-config-status.warn {
+            background: rgba(200, 146, 58, .15);
+            color: var(--silk-gold);
+            border: 1px solid rgba(200, 146, 58, .3);
+        }
+        
+        .ai-config-status.err {
+            background: rgba(168, 50, 75, .15);
+            color: var(--silk-red);
+            border: 1px solid rgba(168, 50, 75, .3);
+        }
+        /* ========== 深度解读卡片 ========== */
+        
+        .ar-deep-card {
+            max-width: 560px;
+            margin: 20px auto 0;
+            background: linear-gradient(135deg, rgba(26, 20, 16, .95), rgba(44, 32, 24, .95));
+            border: 1px solid rgba(212, 168, 87, .4);
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+        
+        .ar-deep-card.show {
+            display: block;
+            animation: deepFade .5s ease;
+        }
+        
+        @keyframes deepFade {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+        
+        .ar-deep-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--silk-gold);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .ar-deep-subtitle {
+            font-size: 11px;
+            color: rgba(244, 236, 216, .5);
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+        
+        .ar-deep-section {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed rgba(212, 168, 87, .15);
+        }
+        
+        .ar-deep-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .ar-deep-label {
+            font-size: 11px;
+            color: var(--silk-jade);
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+        
+        .ar-deep-text {
+            font-size: 13px;
+            color: rgba(244, 236, 216, .85);
+            line-height: 1.8;
+        }
+        
+        .ar-deep-text .highlight {
+            color: var(--silk-gold);
+            font-weight: 600;
+        }
+        
+        .ar-deep-text cite {
+            color: var(--silk-gold);
+            font-style: normal;
+            border-bottom: 1px dotted var(--silk-gold);
+            font-size: 12px;
+        }
+        
+        .ar-deep-loading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--silk-gold);
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+        
+        .ar-deep-loading .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--silk-gold);
+            animation: deepLoading 1.4s infinite ease-in-out both;
+        }
+        
+        .ar-deep-loading .dot:nth-child(1) {
+            animation-delay: -.32s;
+        }
+        
+        .ar-deep-loading .dot:nth-child(2) {
+            animation-delay: -.16s;
+        }
+        
+        @keyframes deepLoading {
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+        /* ========== 丝路问答 AI 导师 ========== */
+        
+        .ai-chat-section {
+            background: linear-gradient(180deg, rgba(26, 20, 16, 0.02), rgba(212, 168, 87, 0.04));
+        }
+        
+        .ai-chat-wrap {
+            max-width: 720px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #e8dcc4;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(26, 20, 16, 0.08);
+        }
+        
+        .ai-chat-header {
+            background: linear-gradient(135deg, var(--silk-gold), var(--silk-red));
+            color: #fff;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .ai-chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .ai-chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .ai-chat-title {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .ai-chat-sub {
+            font-size: 11px;
+            opacity: 0.85;
+            letter-spacing: 1px;
+        }
+        
+        .ai-chat-clear {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 11px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: background 0.3s;
+        }
+        
+        .ai-chat-clear:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+        
+        .ai-chat-messages {
+            height: 420px;
+            overflow-y: auto;
+            padding: 20px 24px;
+            background: var(--paper);
+        }
+        
+        .ai-chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .ai-chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(212, 168, 87, 0.3);
+            border-radius: 3px;
+        }
+        
+        .ai-msg {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+            animation: msgIn 0.3s ease;
+        }
+        
+        @keyframes msgIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+        
+        .ai-msg.user {
+            flex-direction: row-reverse;
+        }
+        
+        .ai-msg-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .ai-msg.ai .ai-msg-avatar {
+            background: linear-gradient(135deg, var(--silk-gold), var(--silk-red));
+            color: #fff;
+        }
+        
+        .ai-msg.user .ai-msg-avatar {
+            background: linear-gradient(135deg, var(--silk-blue), var(--silk-jade));
+            color: #fff;
+        }
+        
+        .ai-msg-bubble {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--ink);
+        }
+        
+        .ai-msg.ai .ai-msg-bubble {
+            background: #fff;
+            border: 1px solid #e8dcc4;
+            border-top-left-radius: 4px;
+        }
+        
+        .ai-msg.user .ai-msg-bubble {
+            background: var(--silk-gold);
+            color: #fff;
+            border-top-right-radius: 4px;
+        }
+        
+        .ai-msg-bubble .cite {
+            color: var(--silk-gold);
+            border-bottom: 1px dotted var(--silk-gold);
+            font-size: 12px;
+            cursor: help;
+        }
+        
+        .ai-msg-bubble strong {
+            color: var(--silk-red);
+        }
+        
+        .ai-msg-bubble ul {
+            margin: 6px 0 0 0;
+            padding-left: 18px;
+        }
+        
+        .ai-msg-bubble li {
+            margin-bottom: 4px;
+        }
+        
+        .ai-msg-bubble p {
+            margin: 0;
+        }
+        
+        .ai-msg.thinking .ai-msg-bubble {
+            background: #fff;
+            border: 1px dashed var(--silk-gold);
+            color: var(--silk-gold);
+        }
+        
+        .ai-thinking-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+        
+        .ai-thinking-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--silk-gold);
+            animation: aiDot 1.4s infinite;
+        }
+        
+        .ai-thinking-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .ai-thinking-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes aiDot {
+            0%,
+            80%,
+            100% {
+                transform: scale(0.6);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .ai-quick-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--paper);
+            border-top: 1px solid rgba(212, 168, 87, 0.1);
+        }
+        
+        .ai-quick-btn {
+            background: #fff;
+            border: 1px solid rgba(212, 168, 87, 0.4);
+            color: var(--silk-red);
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+        
+        .ai-quick-btn:hover {
+            background: var(--silk-gold);
+            color: #fff;
+            border-color: var(--silk-gold);
+            transform: translateY(-1px);
+        }
+        
+        .ai-chat-input-row {
+            display: flex;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #fff;
+            border-top: 1px solid #e8dcc4;
+        }
+        
+        .ai-chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e8dcc4;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+            min-height: 44px;
+            max-height: 120px;
+            transition: border-color 0.3s;
+        }
+        
+        .ai-chat-input:focus {
+            border-color: var(--silk-gold);
+        }
+        
+        .ai-chat-send {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--silk-gold);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .ai-chat-send:hover {
+            background: var(--silk-red);
+            transform: scale(1.05);
+        }
+        
+        .ai-chat-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        /* ========== 尾部 ========== */
+        
+        .footer {
+            background: #0d0a08;
+            color: rgba(244, 236, 216, .6);
+            padding: 60px 32px 40px;
+            text-align: center;
+        }
+        
+        .footer-title {
+            font-size: 24px;
+            color: var(--silk-cream);
+            margin-bottom: 12px;
+            letter-spacing: 4px;
+        }
+        
+        .footer-meta {
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 24px
+        }
+        
+        .footer-meta span {
+            color: var(--silk-gold)
+        }
+        
+        .footer-line {
+            width: 60px;
+            height: 1px;
+            background: var(--silk-gold);
+            margin: 24px auto;
+        }
+        /* ========== 响应式 ========== */
+        
+        @media(max-width:768px) {
+            .nav-links {
+                display: none
+            }
+            .weave-container {
+                grid-template-columns: 1fr
+            }
+            .timeline-item {
+                grid-template-columns: 1fr;
+                text-align: center
+            }
+            .timeline::before {
+                left: 0
+            }
+            .timeline-dot {
+                margin: 0 auto
+            }
+            .timeline-item:nth-child(odd) .timeline-content:first-child {
+                text-align: center
+            }
+        }
+        /* ========== 动画工具类 ========== */
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all .8s
+        }
+        
+        .reveal.visible {
+            opacity: 1;
+            transform: none
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 滚动进度 -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- 导航 -->
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-seal">丝</div>
+                <span>丝路织梦·数韵中华</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#weave">织锦交互</a></li>
+                <li><a href="#map">丝路地图</a></li>
+                <li><a href="#craft">非遗工坊</a></li>
+                <li><a href="#timeline">民族交融</a></li>
+                <li><a href="#rural">乡村振兴</a></li>
+                <li><a href="#ar">AR体验</a></li>
+                <li><a href="#chat" style="color:var(--silk-gold)">AI导师</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <canvas class="hero-canvas" id="heroCanvas"></canvas>
+        <div class="hero-content">
+            <div class="hero-title">丝路织梦</div>
+            <div class="hero-subtitle">数 韵 中 华 · 交 互 体 验</div>
+            <p class="hero-desc">以数字之丝，织千年文脉；以交互之锦，融万族风情。<br>一段跨越时空的丝绸之路文化沉浸之旅。</p>
+            <a href="#weave" class="hero-cta">开 启 旅 程</a>
+        </div>
+        <div class="scroll-hint">向 下 滚 动</div>
+    </header>
+
+    <!-- 织锦交互 -->
+    <section class="section weave-section" id="weave">
+        <div class="section-inner">
+            <span class="section-label">CORE INNOVATION · 核心创新</span>
+            <h2 class="section-title">织<span class="accent">锦</span>交互：编织你的丝路</h2>
+            <p class="section-desc">以丝绸织造为交互隐喻——选择不同民族的文化"丝线"，在画布上交织出独属于你的丝路文化图谱。每一次选择，都是一次文明的对话。</p>
+
+            <div class="weave-container">
+                <div class="weave-canvas-wrap">
+                    <canvas id="weaveCanvas"></canvas>
+                </div>
+                <div class="weave-controls">
+                    <div class="weave-intro">
+                        <h3>选择文化丝线，开始织造</h3>
+                        <p>每条丝线代表丝路沿线的一个民族或文化要素。点击下方按钮切换丝线，在画布上拖动即可"织"出图案。不同丝线交织产生独特的文化融合纹理。</p>
+                    </div>
+                    <div class="thread-selector" id="threadSelector">
+                        <button class="thread-btn active" data-color="#d4a857" data-name="汉·长安">
+            <span class="dot" style="background:#d4a857"></span>汉·长安
+          </button>
+                        <button class="thread-btn" data-color="#a8324b" data-name="唐·西域">
+            <span class="dot" style="background:#a8324b"></span>唐·西域
+          </button>
+                        <button class="thread-btn" data-color="#2c5f7c" data-name="蒙古·草原">
+            <span class="dot" style="background:#2c5f7c"></span>蒙古·草原
+          </button>
+                        <button class="thread-btn" data-color="#5a8a6e" data-name="回·敦煌">
+            <span class="dot" style="background:#5a8a6e"></span>回·敦煌
+          </button>
+                        <button class="thread-btn" data-color="#c8923a" data-name="藏·雪域">
+            <span class="dot" style="background:#c8923a"></span>藏·雪域
+          </button>
+                        <button class="thread-btn" data-color="#8b4a6b" data-name="维吾尔·喀什">
+            <span class="dot" style="background:#8b4a6b"></span>维吾尔·喀什
+          </button>
+                    </div>
+                    <div class="weave-pattern-display" id="patternDisplay">
+                        点击或拖动画布开始织造 · 当前丝线：<strong style="color:var(--silk-red)">汉·长安</strong>
+                    </div>
+                    <div class="weave-stats">
+                        <div class="stat-item">
+                            <div class="stat-num" id="statThreads">1</div>
+                            <div class="stat-label">文化丝线</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-num" id="statNodes">0</div>
+                            <div class="stat-label">交织节点</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-num" id="statFusion">0</div>
+                            <div class="stat-label">融合指数</div>
+                        </div>
+                    </div>
+                    <button class="hero-cta" id="clearWeave" style="font-size:14px;padding:10px 24px">清 空 重 织</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 丝路地图 -->
+    <section class="section map-section" id="map">
+        <div class="section-inner">
+            <span class="section-label">CULTURAL FUSION · 文化交融</span>
+            <h2 class="section-title">丝路<span style="color:var(--silk-gold)">地图</span>：文明的交汇</h2>
+            <p class="section-desc">交互式丝路文化地图——鼠标悬停节点，探索沿线各民族文化的交融脉络。从长安到罗马，从草原到绿洲，每一站都是文明对话的见证。</p>
+
+            <div class="map-container">
+                <svg id="mapSvg" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid meet">
+        <!-- 丝绸之路主线 -->
+        <defs>
+          <linearGradient id="routeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#d4a857;stop-opacity:0.8"/>
+            <stop offset="50%" style="stop-color:#a8324b;stop-opacity:0.6"/>
+            <stop offset="100%" style="stop-color:#2c5f7c;stop-opacity:0.8"/>
+          </linearGradient>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        
+        <!-- 背景星点 -->
+        <g id="stars" opacity="0.3"></g>
+        
+        <!-- 丝路路径 -->
+        <path id="silkRoute" d="M 100 300 Q 200 280 300 290 T 500 280 T 700 300 T 900 290 T 1100 300" 
+              stroke="url(#routeGrad)" stroke-width="3" fill="none" 
+              stroke-dasharray="8 4" filter="url(#glow)"/>
+        
+        <!-- 节点 -->
+        <g id="mapNodes"></g>
+      </svg>
+
+                <div class="map-legend">
+                    <h4>丝路文化带</h4>
+                    <div class="legend-item"><span class="legend-color" style="background:#d4a857"></span>中原农耕文化</div>
+                    <div class="legend-item"><span class="legend-color" style="background:#a8324b"></span>西域绿洲文化</div>
+                    <div class="legend-item"><span class="legend-color" style="background:#2c5f7c"></span>草原游牧文化</div>
+                    <div class="legend-item"><span class="legend-color" style="background:#5a8a6e"></span>高原雪域文化</div>
+                    <div class="legend-item"><span class="legend-color" style="background:#8b4a6b"></span>多元交融文化</div>
+                </div>
+
+                <div class="map-info" id="mapInfo">
+                    <h4 id="mapInfoTitle">悬停节点查看</h4>
+                    <p id="mapInfoDesc">将鼠标移至地图节点，探索丝路沿线文化故事</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 非遗工坊 -->
+    <section class="section craft-section" id="craft">
+        <div class="section-inner">
+            <span class="section-label">INTANGIBLE HERITAGE · 非遗活化</span>
+            <h2 class="section-title">非遗<span class="accent">工坊</span>：手作的温度</h2>
+            <p class="section-desc">精选丝路沿线非物质文化遗产，以交互式数字工坊让传统工艺"活"起来。每一项技艺背后，都是乡村手艺人的坚守与乡村振兴的希望。</p>
+
+            <div class="craft-grid">
+                <div class="craft-card reveal" onclick="alert('进入蜀锦织造工坊：\n\n· 体验挑花结本传统工艺\n· 了解经纬交织原理\n· 探索南京云锦研究院乡村振兴项目')">
+                    <div class="craft-visual">
+                        <svg viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" fill="none" stroke="#fff" stroke-width="2"/><line x1="20" y1="35" x2="80" y2="35" stroke="#fff" stroke-width="1"/><line x1="20" y1="50" x2="80" y2="50" stroke="#fff" stroke-width="1"/><line x1="20" y1="65" x2="80" y2="65" stroke="#fff" stroke-width="1"/><line x1="35" y1="20" x2="35" y2="80" stroke="#fff" stroke-width="1"/><line x1="50" y1="20" x2="50" y2="80" stroke="#fff" stroke-width="1"/><line x1="65" y1="20" x2="65" y2="80" stroke="#fff" stroke-width="1"/></svg>
+                    </div>
+                    <div class="craft-body">
+                        <span class="craft-tag">织造技艺</span>
+                        <h3 class="craft-title">蜀锦·云锦织造</h3>
+                        <p class="craft-desc">历经两千余年的"东方瑰宝"，南京云锦木机妆花手工织造技艺，寸锦寸金。</p>
+                        <span class="craft-action">进入工坊</span>
+                    </div>
+                </div>
+
+                <div class="craft-card reveal" onclick="alert('进入敦煌彩塑工坊：\n\n· 体验塑绘结合工艺\n· 了解矿物颜料配制\n· 探索敦煌研究院文化扶贫项目')">
+                    <div class="craft-visual">
+                        <svg viewBox="0 0 100 100"><circle cx="50" cy="40" r="15" fill="none" stroke="#fff" stroke-width="2"/><path d="M 35 55 Q 50 75 65 55 L 70 85 L 30 85 Z" fill="none" stroke="#fff" stroke-width="2"/><circle cx="45" cy="38" r="2" fill="#fff"/><circle cx="55" cy="38" r="2" fill="#fff"/></svg>
+                    </div>
+                    <div class="craft-body">
+                        <span class="craft-tag">雕塑彩绘</span>
+                        <h3 class="craft-title">敦煌彩塑临摹</h3>
+                        <p class="craft-desc">莫高窟千年彩塑技艺，塑绘结合，以泥为骨、以彩为魂，丝路艺术明珠。</p>
+                        <span class="craft-action">进入工坊</span>
+                    </div>
+                </div>
+
+                <div class="craft-card reveal" onclick="alert('进入和田玉雕工坊：\n\n· 体验传统琢玉工艺\n· 了解昆仑玉文化传承\n· 探索和田玉产业助农项目')">
+                    <div class="craft-visual">
+                        <svg viewBox="0 0 100 100"><ellipse cx="50" cy="55" rx="25" ry="30" fill="none" stroke="#fff" stroke-width="2"/><path d="M 40 45 Q 50 50 60 45" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M 40 65 Q 50 70 60 65" fill="none" stroke="#fff" stroke-width="1.5"/></svg>
+                    </div>
+                    <div class="craft-body">
+                        <span class="craft-tag">玉雕技艺</span>
+                        <h3 class="craft-title">和田玉·昆仑琢玉</h3>
+                        <p class="craft-desc">昆仑山下的玉石之路，比丝路更早的文明走廊，和田玉雕技艺千年传承。</p>
+                        <span class="craft-action">进入工坊</span>
+                    </div>
+                </div>
+
+                <div class="craft-card reveal" onclick="alert('进入哈萨克毡房工坊：\n\n· 体验毡房搭建工艺\n· 了解草原游牧文化\n· 探索伊犁文旅助农项目')">
+                    <div class="craft-visual">
+                        <svg viewBox="0 0 100 100"><path d="M 20 80 L 50 25 L 80 80 Z" fill="none" stroke="#fff" stroke-width="2"/><path d="M 20 80 Q 50 60 80 80" fill="none" stroke="#fff" stroke-width="1.5"/><line x1="50" y1="25" x2="50" y2="80" stroke="#fff" stroke-width="1"/><circle cx="50" cy="55" r="8" fill="none" stroke="#fff" stroke-width="1"/></svg>
+                    </div>
+                    <div class="craft-body">
+                        <span class="craft-tag">毡织技艺</span>
+                        <h3 class="craft-title">哈萨克毡房·草原工艺</h3>
+                        <p class="craft-desc">草原游牧民族的智慧结晶，从擀毡到刺绣，移动的家园承载千年文明。</p>
+                        <span class="craft-action">进入工坊</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 民族交融时间轴 -->
+    <section class="section timeline-section" id="timeline">
+        <div class="section-inner">
+            <span class="section-label">ETHNIC FUSION · 民族交融</span>
+            <h2 class="section-title">千年<span style="color:var(--silk-gold)">交融</span>：文明的长河</h2>
+            <p class="section-desc">丝绸之路不仅是商贸之路，更是民族交融之路。从张骞凿空到"一带一路"，两千年的交往交流交融，铸就了中华民族共同体。</p>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-era">公元前 138 年</div>
+                        <h4 class="timeline-title">张骞凿空西域</h4>
+                        <p class="timeline-text">汉武帝派张骞出使西域，开辟东西方交流通道。中原与西域各民族开始深度交往。</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div></div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-era">公元 7 世纪</div>
+                        <h4 class="timeline-title">大唐·丝路鼎盛</h4>
+                        <p class="timeline-text">长安成为国际都会，胡汉交融、万国来朝。粟特、波斯、阿拉伯商人汇聚，多元文化共生。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-era">13 世纪</div>
+                        <h4 class="timeline-title">蒙元·横跨欧亚</h4>
+                        <p class="timeline-text">蒙古西征打通欧亚大陆，驿站制度完善。各族工匠、商人、学者自由流动，文明大交汇。</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div></div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-era">15 世纪</div>
+                        <h4 class="timeline-title">明清·交融深化</h4>
+                        <p class="timeline-text">回族、撒拉族等民族在丝路沿线形成。茶马互市繁荣，藏传佛教北上，伊斯兰文化东传。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-era">2013 年</div>
+                        <h4 class="timeline-title">一带一路·新时代</h4>
+                        <p class="timeline-text">"一带一路"倡议提出，丝路精神在新时代焕发生机。民族团结进步、乡村振兴全面推进。</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 乡村振兴 -->
+    <section class="section rural-section" id="rural">
+        <div class="section-inner">
+            <span class="section-label">RURAL REVITALIZATION · 乡村振兴</span>
+            <h2 class="section-title">和美<span class="accent">乡村</span>：丝路新故事</h2>
+            <p class="section-desc">数字文化赋能乡村振兴——以丝路文化为魂，以数字技术为翼，让传统村落在新时代焕发新生。每一个故事，都是共同富裕的生动注脚。</p>
+
+            <div class="rural-showcase">
+                <div class="rural-card reveal">
+                    <div class="rural-bg" style="background:linear-gradient(135deg,#a8324b,#d4a857)"></div>
+                    <div class="rural-content">
+                        <div class="rural-region">甘肃·敦煌</div>
+                        <h3 class="rural-title">莫高窟数字赋能</h3>
+                        <p class="rural-text">"数字敦煌"项目让千年艺术走进万家，带动周边乡村文旅，让壁画师成为新职业。</p>
+                        <span class="rural-tag">文博助农</span>
+                    </div>
+                </div>
+
+                <div class="rural-card reveal">
+                    <div class="rural-bg" style="background:linear-gradient(135deg,#2c5f7c,#5a8a6e)"></div>
+                    <div class="rural-content">
+                        <div class="rural-region">新疆·和田</div>
+                        <h3 class="rural-title">艾德莱斯绸复兴</h3>
+                        <p class="rural-text">"一带一路"让和田艾德莱斯绸走向世界，传统织娘在家门口致富，织就共富图景。</p>
+                        <span class="rural-tag">非遗工坊</span>
+                    </div>
+                </div>
+
+                <div class="rural-card reveal">
+                    <div class="rural-bg" style="background:linear-gradient(135deg,#5a8a6e,#c8923a)"></div>
+                    <div class="rural-content">
+                        <div class="rural-region">青海·热贡</div>
+                        <h3 class="rural-title">唐卡艺术新村</h3>
+                        <p class="rural-text">热贡唐卡艺术带动整村致富，"非遗+旅游+研学"模式让藏族村落焕新颜。</p>
+                        <span class="rural-tag">文化新村</span>
+                    </div>
+                </div>
+
+                <div class="rural-card reveal">
+                    <div class="rural-bg" style="background:linear-gradient(135deg,#8b4a6b,#a8324b)"></div>
+                    <div class="rural-content">
+                        <div class="rural-region">云南·大理</div>
+                        <h3 class="rural-title">扎染遇见AIGC</h3>
+                        <p class="rural-text">白族扎染技艺结合AI图样生成，传统纹样焕发新生，周城村成为"中国扎染之乡"。</p>
+                        <span class="rural-tag">AI+非遗</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AR 体验 - 真实物品识别 -->
+    <section class="section ar-section" id="ar">
+        <div class="section-inner">
+            <span class="section-label">AR EXPERIENCE · 增强现实</span>
+            <h2 class="section-title">AR<span style="color:var(--silk-gold)">丝路</span>物语</h2>
+            <p class="section-desc">打开摄像头，扫描身边物品，AI实时识别并匹配丝路文化语境。基于TensorFlow.js + COCO-SSD模型，80类物品智能识别，让日常生活物品与千年丝路文明对话。</p>
+
+            <div class="ar-scanner">
+                <!-- 视频与检测画布 -->
+                <div class="ar-video-wrap">
+                    <video id="arVideo" autoplay playsinline muted></video>
+                    <canvas id="arCanvas"></canvas>
+                </div>
+
+                <!-- 占位提示（未开启时） -->
+                <div class="ar-placeholder" id="arPlaceholder">
+                    <svg viewBox="0 0 100 100" style="filter:drop-shadow(0 0 16px rgba(212,168,87,.6))">
+                        <defs>
+                            <radialGradient id="jarGrad2" cx="40%" cy="40%">
+                                <stop offset="0%" stop-color="#f4ecd8"/>
+                                <stop offset="50%" stop-color="#d4a857"/>
+                                <stop offset="100%" stop-color="#8b4a6b"/>
+                            </radialGradient>
+                        </defs>
+                        <ellipse cx="50" cy="60" rx="30" ry="35" fill="url(#jarGrad2)"/>
+                        <rect x="40" y="20" width="20" height="10" rx="2" fill="#d4a857"/>
+                        <ellipse cx="50" cy="27" rx="12" ry="3" fill="#a8324b" opacity="0.7"/>
+                        <path d="M 35 45 Q 50 40 65 45" stroke="#a8324b" stroke-width="1.5" fill="none" opacity="0.5"/>
+                        <path d="M 33 60 Q 50 55 67 60" stroke="#a8324b" stroke-width="1.5" fill="none" opacity="0.5"/>
+                        <path d="M 35 75 Q 50 70 65 75" stroke="#a8324b" stroke-width="1.5" fill="none" opacity="0.5"/>
+                    </svg>
+                    <p>点击下方按钮开启摄像头<br>对准身边物品开始丝路文化识别</p>
+                </div>
+
+                <!-- 加载中 -->
+                <div class="ar-loading" id="arLoading" style="display:none">
+                    <div class="spinner"></div>
+                    <div id="arLoadingText">正在加载AI识别模型...</div>
+                </div>
+
+                <!-- 错误提示 -->
+                <div class="ar-error" id="arError" style="display:none"></div>
+
+                <!-- 状态栏 -->
+                <div class="ar-status" id="arStatus" style="display:none">
+                    <span class="dot"></span><span id="arStatusText">扫描中...</span>
+                </div>
+
+                <!-- 识别结果 -->
+                <div class="ar-result" id="arResult">
+                    <div class="ar-result-label">丝路文化匹配</div>
+                    <div class="ar-result-name" id="arResultName">—</div>
+                    <div class="ar-result-culture" id="arResultCulture">—</div>
+                    <span class="ar-result-confidence" id="arResultConf">置信度 0%</span>
+                </div>
+
+                <!-- 控制按钮 -->
+                <div class="ar-controls">
+                    <button class="ar-btn" id="arStartBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                        开启扫描
+                    </button>
+                    <button class="ar-btn stop" id="arStopBtn" style="display:none">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
+                        停止扫描
+                    </button>
+                </div>
+            </div>
+
+            <!-- 可识别物品提示 -->
+            <div class="ar-tips">
+                <div class="ar-tip">
+                    <div class="ar-tip-icon">🏺</div>
+                    <div class="ar-tip-text">瓶罐器皿<br>丝路陶瓷</div>
+                </div>
+                <div class="ar-tip">
+                    <div class="ar-tip-icon">✂️</div>
+                    <div class="ar-tip-text">剪刀工具<br>剪纸工艺</div>
+                </div>
+                <div class="ar-tip">
+                    <div class="ar-tip-icon">📕</div>
+                    <div class="ar-tip-text">书本文献<br>古籍传承</div>
+                </div>
+                <div class="ar-tip">
+                    <div class="ar-tip-icon">🐴</div>
+                    <div class="ar-tip-text">马匹动物<br>汗血宝马</div>
+                </div>
+                <div class="ar-tip">
+                    <div class="ar-tip-icon">🍷</div>
+                    <div class="ar-tip-text">酒杯茶具<br>丝路器皿</div>
+                </div>
+                <div class="ar-tip">
+                    <div class="ar-tip-icon">👜</div>
+                    <div class="ar-tip-text">手袋包袱<br>织锦包袱</div>
+                </div>
+            </div>
+
+            <!-- AI 配置面板 -->
+            <div class="ai-config-bar" id="aiConfigBar">
+                <div class="ai-config-header">
+                    <span class="ai-config-title">⚙️ DeepSeek AI 深度解读</span>
+                    <button class="ai-config-toggle" id="aiConfigToggle">展开配置</button>
+                </div>
+                <div class="ai-config-body" id="aiConfigBody">
+                    <div class="ai-config-row">
+                        <select class="ai-config-select" id="aiMode">
+                            <option value="proxy">代理模式（推荐·安全）</option>
+                            <option value="direct">直连模式（需 Key）</option>
+                        </select>
+                    </div>
+                    <div class="ai-config-row" id="directKeyRow" style="display:none">
+                        <input type="password" class="ai-config-input" id="aiApiKey" placeholder="输入 DeepSeek API Key (sk-...)">
+                        <button class="ai-config-btn" id="aiSaveKey">保存</button>
+                        <button class="ai-config-btn secondary" id="aiClearKey">清除</button>
+                    </div>
+                    <div class="ai-config-row" id="proxyRow">
+                        <input type="text" class="ai-config-input" id="aiProxyUrl" placeholder="代理服务器地址" value="http://localhost:3000">
+                        <button class="ai-config-btn" id="aiTestConn">测试连接</button>
+                    </div>
+                    <div class="ai-config-status warn" id="aiConfigStatus">
+                        ⚠️ 未连接 AI — 使用本地 COCO-SSD 基础识别
+                    </div>
+                    <div style="font-size:10px;color:rgba(244,236,216,.4);margin-top:8px;line-height:1.7">
+                        💡 启动代理：<code style="color:var(--silk-gold)">set DEEPSEEK_API_KEY=sk-xxx && node server.js</code><br> 直连模式注意：API Key 将存储在浏览器 localStorage，不建议生产环境使用
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI 深度解读卡片 -->
+            <div class="ar-deep-card" id="arDeepCard">
+                <div class="ar-deep-loading">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <span>AI 正在生成丝路文化深度解读...</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 丝路问答 AI 导师 ========== -->
+    <section class="section ai-chat-section" id="chat">
+        <div class="section-inner">
+            <span class="section-label">AI CULTURAL MENTOR · 文化导师</span>
+            <h2 class="section-title">丝路<span style="color:var(--silk-gold)">问答</span> · AI 文化导师</h2>
+            <p class="section-desc">与丝路文化专家面对面，追问历史细节、探讨非遗技艺、了解乡村振兴故事。AI 导师基于真实史料回答，每一条都有据可查。</p>
+
+            <div class="ai-chat-wrap">
+                <!-- 头部 -->
+                <div class="ai-chat-header">
+                    <div class="ai-chat-header-left">
+                        <div class="ai-chat-avatar">🧞</div>
+                        <div>
+                            <div class="ai-chat-title">丝路智旅 · AI 文化导师</div>
+                            <div class="ai-chat-sub">Powered by DeepSeek · 丝路文化专家人设</div>
+                        </div>
+                    </div>
+                    <button class="ai-chat-clear" id="chatClearBtn">清空对话</button>
+                </div>
+
+                <!-- 消息区 -->
+                <div class="ai-chat-messages" id="chatMessages">
+                    <!-- 欢迎消息 -->
+                    <div class="ai-msg ai">
+                        <div class="ai-msg-avatar">🧞</div>
+                        <div class="ai-msg-bubble">
+                            <p>你好！我是丝路文化导师 🧞</p>
+                            <p style="margin-top:8px">我精通丝绸之路的 <strong>2000 年文明交融史</strong>，熟悉沿线 <strong>40+ 项非遗技艺</strong>，了解 <strong>乡村振兴助农案例</strong>。</p>
+                            <p style="margin-top:8px">请问：你对丝路文化的哪个方面最感兴趣？</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快捷问题 -->
+                <div class="ai-quick-row">
+                    <button class="ai-quick-btn" data-q="什么是丝绸之路？它的历史背景和起止点是什么？">什么是丝绸之路？</button>
+                    <button class="ai-quick-btn" data-q="丝路沿线有哪些国家级或人类非遗项目？">丝路非遗有哪些？</button>
+                    <button class="ai-quick-btn" data-q="丝路如何促进了中华民族的交往交流交融？">民族交融的例子？</button>
+                    <button class="ai-quick-btn" data-q="请介绍一个数字文化赋能乡村振兴的真实案例">乡村振兴案例？</button>
+                    <button class="ai-quick-btn" data-q="张骞、班超、马可·波罗在丝路上分别做了什么？">丝路人物故事？</button>
+                    <button class="ai-quick-btn" data-q="一带一路和古丝绸之路有什么联系和区别？">一带一路和古丝路？</button>
+                </div>
+
+                <!-- 输入区 -->
+                <div class="ai-chat-input-row">
+                    <textarea class="ai-chat-input" id="chatInput" placeholder="向 AI 文化导师提问...（Enter 发送，Shift+Enter 换行）" rows="1"></textarea>
+                    <button class="ai-chat-send" id="chatSendBtn" title="发送">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-title">丝路织梦 · 数韵中华</div>
+        <div class="footer-meta">
+            山东省大学生软件设计大赛 · 数字媒体赛道 <span>|</span> 交互设计方向
+        </div>
+        <div class="footer-line"></div>
+        <p style="font-size:12px;opacity:.6">以数字之丝织千年文脉 · 以交互之锦融万族风情</p>
+    </footer>
+
+    <!-- TensorFlow.js + COCO-SSD 物品识别模型 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
+
+    <script>
+        /* ========== 滚动进度 + 导航显隐 ========== */
+        const progress = document.getElementById('scrollProgress');
+        const nav = document.getElementById('nav');
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const sc = window.scrollY;
+            const h = document.documentElement.scrollHeight - window.innerHeight;
+            progress.style.width = (sc / h * 100) + '%';
+            if (sc > lastScroll && sc > 200) nav.classList.add('hide');
+            else nav.classList.remove('hide');
+            lastScroll = sc;
+        });
+
+        /* ========== Hero Canvas - 丝绸流动粒子 ========== */
+        const hc = document.getElementById('heroCanvas');
+        const hctx = hc.getContext('2d');
+        let hw, hh, particles = [];
+
+        function resizeHero() {
+            hw = hc.width = window.innerWidth;
+            hh = hc.height = window.innerHeight
+        }
+        resizeHero();
+        window.addEventListener('resize', resizeHero);
+
+        const colors = ['#d4a857', '#a8324b', '#2c5f7c', '#5a8a6e', '#c8923a'];
+        for (let i = 0; i < 80; i++) {
+            particles.push({
+                x: Math.random() * hw,
+                y: Math.random() * hh,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.5) * 0.3,
+                r: Math.random() * 2 + 0.5,
+                c: colors[Math.floor(Math.random() * colors.length)],
+                a: Math.random() * 0.6 + 0.2
+            });
+        }
+
+        function drawHero() {
+            hctx.fillStyle = 'rgba(26,20,16,0.08)';
+            hctx.fillRect(0, 0, hw, hh);
+
+            // 绘制连接线
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const d = Math.sqrt(dx * dx + dy * dy);
+                    if (d < 120) {
+                        hctx.strokeStyle = `rgba(212,168,87,${(1-d/120)*0.15})`;
+                        hctx.lineWidth = 0.5;
+                        hctx.beginPath();
+                        hctx.moveTo(particles[i].x, particles[i].y);
+                        hctx.lineTo(particles[j].x, particles[j].y);
+                        hctx.stroke();
+                    }
+                }
+            }
+
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0 || p.x > hw) p.vx *= -1;
+                if (p.y < 0 || p.y > hh) p.vy *= -1;
+                hctx.fillStyle = p.c;
+                hctx.globalAlpha = p.a;
+                hctx.beginPath();
+                hctx.arc(p.x, p.y, Math.max(0.5, p.r), 0, Math.PI * 2);
+                hctx.fill();
+            });
+            hctx.globalAlpha = 1;
+            requestAnimationFrame(drawHero);
+        }
+        drawHero();
+
+        /* ========== 织锦 Canvas 交互 ========== */
+        const wc = document.getElementById('weaveCanvas');
+        const wctx = wc.getContext('2d');
+        let ww, wh;
+
+        function resizeWeave() {
+            const rect = wc.getBoundingClientRect();
+            wc.width = rect.width * 2;
+            wc.height = rect.height * 2;
+            wctx.scale(2, 2);
+            ww = rect.width;
+            wh = rect.height;
+            drawWeaveBg();
+        }
+
+        function drawWeaveBg() {
+            wctx.fillStyle = '#1a1410';
+            wctx.fillRect(0, 0, ww, wh);
+            // 经纬线
+            wctx.strokeStyle = 'rgba(212,168,87,0.08)';
+            wctx.lineWidth = 0.5;
+            for (let x = 0; x < ww; x += 20) {
+                wctx.beginPath();
+                wctx.moveTo(x, 0);
+                wctx.lineTo(x, wh);
+                wctx.stroke()
+            }
+            for (let y = 0; y < wh; y += 20) {
+                wctx.beginPath();
+                wctx.moveTo(0, y);
+                wctx.lineTo(ww, y);
+                wctx.stroke()
+            }
+        }
+
+        let currentColor = '#d4a857';
+        let currentName = '汉·长安';
+        let weavePaths = [];
+        let usedColors = new Set();
+        let isDrawing = false;
+        let nodeCount = 0;
+
+        const threadBtns = document.querySelectorAll('.thread-btn');
+        const patternDisplay = document.getElementById('patternDisplay');
+        const statThreads = document.getElementById('statThreads');
+        const statNodes = document.getElementById('statNodes');
+        const statFusion = document.getElementById('statFusion');
+
+        threadBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                threadBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentColor = btn.dataset.color;
+                currentName = btn.dataset.name;
+                usedColors.add(currentColor);
+                patternDisplay.innerHTML = `当前丝线：<strong style="color:${currentColor}">${currentName}</strong> · 在画布上拖动开始织造`;
+                statThreads.textContent = usedColors.size;
+            });
+        });
+
+        wc.addEventListener('mousedown', e => {
+            isDrawing = true;
+            startPath(e)
+        });
+        wc.addEventListener('mousemove', e => {
+            if (isDrawing) drawPath(e)
+        });
+        wc.addEventListener('mouseup', () => {
+            isDrawing = false;
+            finishPath()
+        });
+        wc.addEventListener('mouseleave', () => {
+            isDrawing = false
+        });
+        wc.addEventListener('touchstart', e => {
+            e.preventDefault();
+            isDrawing = true;
+            const t = e.touches[0];
+            startPath({
+                clientX: t.clientX,
+                clientY: t.clientY
+            })
+        });
+        wc.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if (isDrawing) {
+                const t = e.touches[0];
+                drawPath({
+                    clientX: t.clientX,
+                    clientY: t.clientY
+                })
+            }
+        });
+        wc.addEventListener('touchend', () => {
+            isDrawing = false;
+            finishPath()
+        });
+
+        let lastX = null,
+            lastY = null;
+
+        function getPos(e) {
+            const r = wc.getBoundingClientRect();
+            return {
+                x: e.clientX - r.left,
+                y: e.clientY - r.top
+            };
+        }
+
+        function startPath(e) {
+            const p = getPos(e);
+            lastX = p.x;
+            lastY = p.y;
+            weavePaths.push({
+                color: currentColor,
+                points: [p]
+            });
+        }
+
+        function drawPath(e) {
+            const p = getPos(e);
+            const path = weavePaths[weavePaths.length - 1];
+            if (path) {
+                path.points.push(p);
+                wctx.strokeStyle = currentColor;
+                wctx.lineWidth = 3;
+                wctx.lineCap = 'round';
+                wctx.shadowBlur = 8;
+                wctx.shadowColor = currentColor;
+                wctx.beginPath();
+                wctx.moveTo(lastX, lastY);
+                wctx.lineTo(p.x, p.y);
+                wctx.stroke();
+                wctx.shadowBlur = 0;
+                // 交织节点
+                if (Math.random() < 0.1) {
+                    nodeCount++;
+                    statNodes.textContent = nodeCount;
+                    wctx.fillStyle = currentColor;
+                    wctx.beginPath();
+                    wctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                    wctx.fill();
+                }
+            }
+            lastX = p.x;
+            lastY = p.y;
+        }
+
+        function finishPath() {
+            const fusion = Math.min(100, usedColors.size * nodeCount * 0.5);
+            statFusion.textContent = Math.round(fusion);
+            if (weavePaths.length > 0 && usedColors.size > 1) {
+                patternDisplay.innerHTML = `已织造 <strong style="color:var(--silk-red)">${weavePaths.length}</strong> 条丝线 · 融合 <strong style="color:var(--silk-gold)">${usedColors.size}</strong> 种文化 · <strong style="color:var(--silk-blue)">文明在此交汇</strong>`;
+            }
+        }
+
+        document.getElementById('clearWeave').addEventListener('click', () => {
+            drawWeaveBg();
+            weavePaths = [];
+            usedColors = new Set([currentColor]);
+            nodeCount = 0;
+            statNodes.textContent = 0;
+            statFusion.textContent = 0;
+            statThreads.textContent = 1;
+            patternDisplay.innerHTML = `画布已清空 · 当前丝线：<strong style="color:${currentColor}">${currentName}</strong>`;
+        });
+
+        // 初始化
+        setTimeout(() => {
+            resizeWeave();
+            usedColors.add(currentColor);
+        }, 100);
+
+        /* ========== 丝路地图节点 ========== */
+        const mapNodes = [{
+            x: 100,
+            y: 300,
+            name: '长安·西安',
+            color: '#d4a857',
+            desc: '丝路起点，十三朝古都。汉唐文化核心，中华文明东端枢纽。'
+        }, {
+            x: 250,
+            y: 280,
+            name: '敦煌',
+            color: '#5a8a6e',
+            desc: '丝路咽喉，莫高窟千年艺术宝库。多元文化在此交汇融合。'
+        }, {
+            x: 380,
+            y: 295,
+            name: '吐鲁番',
+            color: '#a8324b',
+            desc: '西域重镇，高昌古城所在地。葡萄沟绿洲文明，多民族共居。'
+        }, {
+            x: 500,
+            y: 285,
+            name: '喀什',
+            color: '#8b4a6b',
+            desc: '丝路要冲，"一带一路"重要节点。维吾尔文化中心，东西交汇。'
+        }, {
+            x: 620,
+            y: 300,
+            name: '撒马尔罕',
+            color: '#c8923a',
+            desc: '中亚明珠，粟特商人故乡。丝路商贸枢纽，文明对话见证。'
+        }, {
+            x: 780,
+            y: 290,
+            name: '巴格达',
+            color: '#2c5f7c',
+            desc: '阿拉伯文化中心，阿拔斯王朝都城。百年翻译运动重镇。'
+        }, {
+            x: 950,
+            y: 305,
+            name: '君士坦丁堡',
+            color: '#5a8a6e',
+            desc: '欧亚桥梁，拜占庭帝国都城。东西教会交汇，丝路西端枢纽。'
+        }, {
+            x: 1100,
+            y: 300,
+            name: '罗马',
+            color: '#d4a857',
+            desc: '丝路西端，西方文明源头。东西贸易终点，文化对话终点。'
+        }];
+
+        const nodesG = document.getElementById('mapNodes');
+        const mapInfo = document.getElementById('mapInfo');
+        const mapInfoTitle = document.getElementById('mapInfoTitle');
+        const mapInfoDesc = document.getElementById('mapInfoDesc');
+
+        // 背景星点
+        const starsG = document.getElementById('stars');
+        for (let i = 0; i < 50; i++) {
+            const cx = Math.random() * 1200,
+                cy = Math.random() * 600,
+                r = Math.random() * 1.2;
+            const star = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            star.setAttribute('cx', cx);
+            star.setAttribute('cy', cy);
+            star.setAttribute('r', Math.max(0.3, r));
+            star.setAttribute('fill', '#f4ecd8');
+            starsG.appendChild(star);
+        }
+
+        mapNodes.forEach((n, i) => {
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            g.setAttribute('transform', `translate(${n.x},${n.y})`);
+            g.style.cursor = 'pointer';
+
+            // 光晕
+            const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            glow.setAttribute('r', '18');
+            glow.setAttribute('fill', n.color);
+            glow.setAttribute('opacity', '0.2');
+            glow.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'animate'));
+
+            // 节点
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('r', '8');
+            circle.setAttribute('fill', n.color);
+            circle.setAttribute('stroke', '#f4ecd8');
+            circle.setAttribute('stroke-width', '2');
+
+            // 脉冲动画
+            const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            pulse.setAttribute('r', '8');
+            pulse.setAttribute('fill', 'none');
+            pulse.setAttribute('stroke', n.color);
+            pulse.setAttribute('stroke-width', '2');
+            const anim = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+            anim.setAttribute('attributeName', 'r');
+            anim.setAttribute('from', '8');
+            anim.setAttribute('to', '24');
+            anim.setAttribute('dur', '2s');
+            anim.setAttribute('repeatCount', 'indefinite');
+            anim.setAttribute('begin', `${i*0.3}s`);
+            const animO = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+            animO.setAttribute('attributeName', 'opacity');
+            animO.setAttribute('from', '0.6');
+            animO.setAttribute('to', '0');
+            animO.setAttribute('dur', '2s');
+            animO.setAttribute('repeatCount', 'indefinite');
+            animO.setAttribute('begin', `${i*0.3}s`);
+            pulse.appendChild(anim);
+            pulse.appendChild(animO);
+
+            // 标签
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', '0');
+            text.setAttribute('y', '-18');
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('fill', '#f4ecd8');
+            text.setAttribute('font-size', '12');
+            text.textContent = n.name;
+
+            g.appendChild(glow);
+            g.appendChild(pulse);
+            g.appendChild(circle);
+            g.appendChild(text);
+
+            g.addEventListener('mouseenter', () => {
+                glow.setAttribute('opacity', '0.4');
+                mapInfoTitle.textContent = n.name;
+                mapInfoDesc.textContent = n.desc;
+                mapInfo.classList.add('show');
+            });
+            g.addEventListener('mouseleave', () => {
+                glow.setAttribute('opacity', '0.2');
+                mapInfo.classList.remove('show');
+            });
+
+            nodesG.appendChild(g);
+        });
+
+        /* ========== 滚动显现动画 ========== */
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) e.target.classList.add('visible');
+            });
+        }, {
+            threshold: 0.15
+        });
+
+        document.querySelectorAll('.reveal,.timeline-item').forEach(el => observer.observe(el));
+
+        /* ========== 真实AR物品识别系统（TensorFlow.js + COCO-SSD）========== */
+        // 丝路文化映射表：COCO-SSD识别的80类物品 → 丝路文化语境
+        // 文化声明均有据可查，不确定内容采用保守表述
+        const silkRoadCultureMap = {
+            // 器皿类 → 丝路陶瓷
+            'bottle': {
+                name: '丝路器皿·瓶',
+                culture: '丝路沿线出土的陶瓶、瓷瓶是东西方贸易的见证。从长安到撒马尔罕，陶器、瓷器承载的不只是液体，更是文明交流的载体。《丝路文物图鉴》收录大量此类器物。',
+                icon: '🏺'
+            },
+            'vase': {
+                name: '丝路三彩载物罐',
+                culture: '唐三彩载物罐是丝路贸易的标志性器物，骆驼载物俑展现了丝路商旅的真实图景。三彩工艺在盛唐时期达到巅峰，其铅釉技术可能受西亚玻璃工艺启发。',
+                icon: '🏺'
+            },
+            'bowl': {
+                name: '丝路茶碗',
+                culture: '丝路茶碗见证茶马互市繁荣。唐宋时期茶马古道开通，到明清茶马互市制度化，一碗茶汤连接农耕与游牧两大文明。',
+                icon: '🍵'
+            },
+            'cup': {
+                name: '丝路茶杯',
+                culture: '丝路沿线茶具文化交融，中原青瓷白瓷与西域琉璃杯在长安汇聚，体现东西方工艺对话。法门寺地宫出土唐代琉璃茶盏即为实证。',
+                icon: '🍵'
+            },
+            'wine glass': {
+                name: '西域琉璃杯',
+                culture: '玻璃工艺经丝路从东罗马（拜占庭）传入中国，唐代贵族以西域琉璃杯饮酒为时尚。法门寺、何家村窖藏均出土唐代玻璃器。',
+                icon: '🍷'
+            },
+            'fork': {
+                name: '丝路餐具',
+                culture: '丝路沿线餐具文化交融，波斯萨珊金银器风格影响唐代金银器形制，何家村窖藏出土的鎏金舞马衔杯纹银壶即融合中西工艺。',
+                icon: '🍴'
+            },
+            'knife': {
+                name: '游牧佩刀',
+                culture: '草原游牧民族的佩刀既是工具也是身份象征。蒙古弯刀、哈萨克折刀工艺沿丝路广泛传播，对中原兵器形制产生影响。',
+                icon: '🗡️'
+            },
+            'spoon': {
+                name: '丝路汤勺',
+                culture: '丝路饮食文化交融的见证，从西域抓饭到中原羹汤，一勺之中可见文明对话。唐代金银器中可见融合西域风格的勺类。',
+                icon: '🥄'
+            },
+            // 工具类 → 非遗工艺
+            'scissors': {
+                name: '剪纸工艺',
+                culture: '中国剪纸于2009年入选联合国人类非物质文化遗产代表作名录。丝路沿线剪纸艺术各具特色，从陕西窗花到维吾尔剪纸，一把剪刀剪出多元文化。',
+                icon: '✂️'
+            },
+            // 书籍 → 古籍传承
+            'book': {
+                name: '丝路古籍',
+                culture: '丝路沿线文献是文明对话的明证。《史记·大宛列传》《大唐西域记》记载丝路见闻，敦煌遗书涵盖汉、藏、回鹘、梵文、粟特文等多语种文献。',
+                icon: '📕'
+            },
+            // 动物 → 丝路生灵
+            'horse': {
+                name: '汗血宝马',
+                culture: '中国家马最早于距今约4000年前出现在甘青齐家文化地区，由中亚经草原通道传入。汉通西域后，大宛汗血马（今费尔干纳）引入中原，汉武帝作《天马歌》以志其盛。',
+                icon: '🐴'
+            },
+            'sheep': {
+                name: '草原游牧·羊',
+                culture: '羊是草原游牧文明的核心，蒙古、哈萨克等民族"逐水草而居"，羊毛纺织、羊肉饮食贯穿丝路游牧文化。新疆和田羊毛是丝路重要贸易商品。',
+                icon: '🐑'
+            },
+            'cow': {
+                name: '丝路畜牧·牛',
+                culture: '牛耕技术经丝路由西域传入中原，逐渐取代耒耕成为主流耕作方式。牛也是茶马互市的重要交易物资，连接农耕与游牧经济。',
+                icon: '🐄'
+            },
+            'bird': {
+                name: '丝路飞禽',
+                culture: '丝路沿线飞禽是文化交流的使者，敦煌壁画中的迦陵频伽（妙音鸟）、波斯细密画中的神鸟西摩格（Simurgh），跨越文明边界的神话意象。',
+                icon: '🐦'
+            },
+            'cat': {
+                name: '丝路文化中的猫',
+                culture: '中国家猫的驯化起源早于丝路时期，新石器时代遗址已有猫骨发现。但猫沿丝路在欧亚大陆间的传播交流持续进行，唐代《猫苑》记载宫廷养猫风尚，可能受波斯文化影响。',
+                icon: '🐱'
+            },
+            'dog': {
+                name: '丝路猎犬',
+                culture: '猎犬是丝路游牧民族的伙伴，蒙古獒、哈萨克猎犬、藏獒等品种沿丝路区域分布，陪伴游牧生活与狩猎活动，犬文化在丝路沿线多元共生。',
+                icon: '🐕'
+            },
+            // 人物 → 丝路商旅
+            'person': {
+                name: '丝路商旅',
+                culture: '丝路上行走着各国商旅：粟特商人（丝路最活跃的商业族群）、波斯使节、汉族马夫、回鹘驼工。多元民族共筑丝路繁华，展现各民族交往交流交融。',
+                icon: '🧑‍🤝‍🧑'
+            },
+            // 交通 → 丝路工具
+            'car': {
+                name: '现代丝路交通',
+                culture: '古今丝路交通变迁：从骆驼商队到中欧班列，从木轮牛车到高速公路。"一带一路"新时代，丝路精神以全新的交通形式延续——中欧班列连接亚欧大陆。',
+                icon: '🚗'
+            },
+            // 食物 → 丝路饮食
+            'banana': {
+                name: '丝路果品贸易',
+                culture: '丝路沿线果品贸易繁荣。葡萄、核桃、石榴、无花果、苜蓿等作物沿丝路传入中原，丰富中华饮食文化。《齐民要术》记载了多种外来作物的栽培方法。',
+                icon: '🍌'
+            },
+            'apple': {
+                name: '丝路·苹属作物',
+                culture: '新疆野苹果（Malus sieversii）是栽培苹果的重要祖先种之一，分布于天山山脉。苹果的传播路径与丝路高度重合，中亚可能是苹果全球扩散的重要枢纽。',
+                icon: '🍎'
+            },
+            'orange': {
+                name: '丝路柑橘传播',
+                culture: '柑橘原产中国，经丝路向西传播至阿拉伯半岛，后由阿拉伯人传入地中海地区。"orange"一词源自梵语"nāraṅga"，经波斯-阿拉伯语传入欧洲，见证作物传播的文化轨迹。',
+                icon: '🍊'
+            },
+            'cake': {
+                name: '丝路糕点文化',
+                culture: '丝路糕点文化交融：维吾尔烤馕、回族油香、汉族月饼、波斯面包，面食工艺在丝路沿线相互借鉴、本地化发展，形成今日中国多元的面点文化。',
+                icon: '🍰'
+            },
+            // 家具 → 丝路家居
+            'chair': {
+                name: '丝路·胡床影响',
+                culture: '椅凳等高坐家具沿丝路传入中原，改变了中国人的坐姿习惯（从跪坐变为垂足坐）。胡床（折叠椅）是典型舶来品，经西域传入后逐渐演变为今天的椅子。',
+                icon: '🪑'
+            },
+            'couch': {
+                name: '丝路卧具交融',
+                culture: '丝路沿线卧具文化交融，从西域胡榻到中原拔步床，家具形制见证生活方式的文明对话。唐代《韩熙载夜宴图》中可见融合中西风格的家具。',
+                icon: '🛋️'
+            },
+            // 织物包 → 织锦
+            'handbag': {
+                name: '丝路织锦包袱',
+                culture: '丝路织锦是中华文明瑰宝：蜀锦、云锦（2009年人类非遗）、宋锦、壮锦并称"四大名锦"。艾德莱斯绸是新疆国家级非遗，"织锦包袱"浓缩千年织造智慧。',
+                icon: '👜'
+            },
+            'suitcase': {
+                name: '丝路行囊',
+                culture: '丝路行旅的行囊承载文明交流的物资——从粟特商队的驼驮到现代旅行箱，行囊之中可见丝路精神的延续：开放、交融、创新。',
+                icon: '🧳'
+            },
+            // 钟表 → 古代计时
+            'clock': {
+                name: '丝路计时',
+                culture: '古代丝路计时从日晷、漏刻到机械钟。阿拉伯天文仪器沿丝路传入中原，元代郭守敬融合东西天文智慧，制简仪、仰仪等天文仪器，精度领先世界。',
+                icon: '🕐'
+            },
+            // 默认
+            'default': {
+                name: '丝路物语',
+                culture: '丝路沿线万物皆故事。每一件物品的背后，都可能连接着两千年的文明对话。继续扫描其他物品，发现更多丝路文化。',
+                icon: '✨'
+            }
+        };
+
+        // AR扫描器状态
+        let arModel = null; // COCO-SSD模型
+        let arStream = null; // 摄像头流
+        let arDetecting = false; // 是否在检测
+        let arRafId = null; // requestAnimationFrame ID
+        let lastDetectTime = 0; // 上次检测时间（节流）
+
+        const arVideo = document.getElementById('arVideo');
+        const arCanvas = document.getElementById('arCanvas');
+        const arCtx = arCanvas.getContext('2d');
+        const arPlaceholder = document.getElementById('arPlaceholder');
+        const arLoading = document.getElementById('arLoading');
+        const arLoadingText = document.getElementById('arLoadingText');
+        const arError = document.getElementById('arError');
+        const arStatus = document.getElementById('arStatus');
+        const arStatusText = document.getElementById('arStatusText');
+        const arResult = document.getElementById('arResult');
+        const arResultName = document.getElementById('arResultName');
+        const arResultCulture = document.getElementById('arResultCulture');
+        const arResultConf = document.getElementById('arResultConf');
+        const arStartBtn = document.getElementById('arStartBtn');
+        const arStopBtn = document.getElementById('arStopBtn');
+
+        // 显示错误
+        function showArError(msg) {
+            arError.style.display = 'flex';
+            arError.innerHTML = '<div><p style="margin-bottom:12px">⚠️</p>' + msg + '<br><span style="font-size:12px;opacity:.7">请检查摄像头权限或使用支持摄像头的设备</span></div>';
+            arLoading.style.display = 'none';
+            arStatus.style.display = 'none';
+        }
+
+        // 开启扫描
+        arStartBtn.addEventListener('click', async() => {
+            arPlaceholder.style.display = 'none';
+            arError.style.display = 'none';
+            arLoading.style.display = 'flex';
+            arLoadingText.textContent = '正在加载AI识别模型...';
+
+            // 加载模型（仅首次）
+            if (!arModel) {
+                try {
+                    arModel = await cocoSsd.load();
+                    console.log('COCO-SSD模型加载完成');
+                } catch (e) {
+                    showArError('AI模型加载失败，请检查网络连接<br>需联网加载TensorFlow.js模型');
+                    return;
+                }
+            }
+
+            arLoadingText.textContent = '正在开启摄像头...';
+
+            // 开启摄像头
+            try {
+                arStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment',
+                        width: {
+                            ideal: 640
+                        },
+                        height: {
+                            ideal: 480
+                        }
+                    },
+                    audio: false
+                });
+                arVideo.srcObject = arStream;
+                await new Promise(resolve => {
+                    arVideo.onloadedmetadata = () => {
+                        arVideo.play();
+                        resolve();
+                    };
+                });
+
+                // 设置canvas尺寸
+                arCanvas.width = arVideo.videoWidth || 640;
+                arCanvas.height = arVideo.videoHeight || 480;
+
+                arLoading.style.display = 'none';
+                arStatus.style.display = 'block';
+                arStatusText.textContent = '扫描中·对准物品';
+                arStartBtn.style.display = 'none';
+                arStopBtn.style.display = 'flex';
+                arResult.classList.add('show');
+                arResultName.textContent = '准备识别';
+                arResultCulture.textContent = '将物品对准摄像头，系统将自动识别并匹配丝路文化语境';
+                arResultConf.textContent = '等待识别...';
+
+                arDetecting = true;
+                detectLoop();
+            } catch (e) {
+                let msg = '摄像头开启失败';
+                if (e.name === 'NotAllowedError') msg = '摄像头权限被拒绝<br>请在浏览器设置中允许摄像头权限';
+                else if (e.name === 'NotFoundError') msg = '未检测到摄像头<br>请使用带摄像头的设备';
+                else if (e.name === 'NotReadableError') msg = '摄像头被其他程序占用<br>请关闭其他使用摄像头的程序';
+                showArError(msg);
+            }
+        });
+
+        // 停止扫描
+        arStopBtn.addEventListener('click', stopArScan);
+
+        function stopArScan() {
+            arDetecting = false;
+            if (arRafId) cancelAnimationFrame(arRafId);
+            if (arStream) {
+                arStream.getTracks().forEach(t => t.stop());
+                arStream = null;
+            }
+            arVideo.srcObject = null;
+            arCtx.clearRect(0, 0, arCanvas.width, arCanvas.height);
+            arStatus.style.display = 'none';
+            arStopBtn.style.display = 'none';
+            arStartBtn.style.display = 'flex';
+            arResult.classList.remove('show');
+            arPlaceholder.style.display = 'flex';
+        }
+
+        // 检测循环
+        async function detectLoop() {
+            if (!arDetecting || !arModel || !arVideo.videoWidth) {
+                arRafId = requestAnimationFrame(detectLoop);
+                return;
+            }
+
+            const now = performance.now();
+            // 节流：每200ms检测一次，降低CPU占用
+            if (now - lastDetectTime < 200) {
+                arRafId = requestAnimationFrame(detectLoop);
+                return;
+            }
+            lastDetectTime = now;
+
+            try {
+                const predictions = await arModel.detect(arVideo);
+                drawDetections(predictions);
+                updateResult(predictions);
+            } catch (e) {
+                console.error('检测错误:', e);
+            }
+
+            arRafId = requestAnimationFrame(detectLoop);
+        }
+
+        // 绘制检测框
+        function drawDetections(predictions) {
+            arCtx.clearRect(0, 0, arCanvas.width, arCanvas.height);
+            predictions.forEach(p => {
+                if (p.score < 0.5) return; // 置信度阈值
+                const [x, y, w, h] = p.bbox;
+                const culture = silkRoadCultureMap[p.class] || silkRoadCultureMap.default;
+
+                // 检测框
+                arCtx.strokeStyle = '#d4a857';
+                arCtx.lineWidth = 3;
+                arCtx.strokeRect(x, y, w, h);
+
+                // 标签背景
+                const label = culture.icon + ' ' + culture.name;
+                arCtx.font = 'bold 16px "PingFang SC", sans-serif';
+                const tw = arCtx.measureText(label).width;
+                arCtx.fillStyle = 'rgba(212, 168, 87, 0.95)';
+                arCtx.fillRect(x, Math.max(0, y - 28), tw + 16, 26);
+
+                // 标签文字（注意canvas已镜像，文字需反向）
+                arCtx.save();
+                arCtx.scale(-1, 1);
+                arCtx.fillStyle = '#1a1410';
+                arCtx.fillText(label, -(x + tw + 8), Math.max(20, y - 8));
+                arCtx.restore();
+            });
+        }
+
+        // 更新识别结果（取置信度最高的）
+        function updateResult(predictions) {
+            const valid = predictions.filter(p => p.score >= 0.5);
+            if (valid.length === 0) {
+                arResultName.textContent = '未识别到物品';
+                arResultCulture.textContent = '请将物品对准摄像头，保持光线充足、距离适中（30-50cm）';
+                arResultConf.textContent = '置信度 0%';
+                arStatusText.textContent = '扫描中·寻找物品...';
+                return;
+            }
+
+            // 取置信度最高
+            const best = valid.reduce((a, b) => a.score > b.score ? a : b);
+            const culture = silkRoadCultureMap[best.class] || silkRoadCultureMap.default;
+            const conf = Math.round(best.score * 100);
+
+            arResultName.innerHTML = culture.icon + ' ' + culture.name;
+            arResultCulture.textContent = culture.culture;
+            arResultConf.textContent = '置信度 ' + conf + '% · 类别: ' + best.class;
+            arStatusText.textContent = '已识别: ' + culture.name + ' (' + conf + '%)';
+
+            // 高置信度时触发 AI 深度解读（异步，不阻塞检测循环）
+            if (conf >= 70) {
+                arStatusText.textContent = '✓ 识别成功: ' + culture.name;
+                triggerDeepAnalysis(predictions, best);
+            }
+        }
+
+        /* ========== DeepSeek AI 配置系统 ========== */
+        const AI_CONFIG = {
+            mode: localStorage.getItem('ai_mode') || 'proxy', // 'proxy' | 'direct'
+            proxyUrl: localStorage.getItem('ai_proxy_url') || 'http://localhost:3000',
+            apiKey: localStorage.getItem('ai_api_key') || '',
+            deepseekBase: 'https://api.deepseek.com',
+            model: 'deepseek-flash',
+            enabled: false, // AI 是否可用（健康检查通过）
+            cooldownUntil: 0, // 429 限流冷却时间戳
+            lastAnalysisKey: '', // 防止重复分析（相同 class 短时间内不重复调 AI）
+            lastAnalysisTime: 0
+        };
+
+        // DOM 引用
+        const $aiMode = document.getElementById('aiMode');
+        const $aiProxyUrl = document.getElementById('aiProxyUrl');
+        const $aiApiKey = document.getElementById('aiApiKey');
+        const $aiConfigToggle = document.getElementById('aiConfigToggle');
+        const $aiConfigBody = document.getElementById('aiConfigBody');
+        const $aiConfigStatus = document.getElementById('aiConfigStatus');
+        const $aiSaveKey = document.getElementById('aiSaveKey');
+        const $aiClearKey = document.getElementById('aiClearKey');
+        const $aiTestConn = document.getElementById('aiTestConn');
+        const $directKeyRow = document.getElementById('directKeyRow');
+        const $proxyRow = document.getElementById('proxyRow');
+        const $arDeepCard = document.getElementById('arDeepCard');
+
+        // 初始化
+        function initAIConfig() {
+            $aiMode.value = AI_CONFIG.mode;
+            $aiProxyUrl.value = AI_CONFIG.proxyUrl;
+            if (AI_CONFIG.apiKey) $aiApiKey.value = AI_CONFIG.apiKey;
+            updateAIModeUI();
+            checkAIHealth();
+        }
+
+        function updateAIModeUI() {
+            AI_CONFIG.mode = $aiMode.value;
+            $directKeyRow.style.display = AI_CONFIG.mode === 'direct' ? 'flex' : 'none';
+            $proxyRow.style.display = AI_CONFIG.mode === 'proxy' ? 'flex' : 'none';
+            localStorage.setItem('ai_mode', AI_CONFIG.mode);
+        }
+
+        $aiConfigToggle.addEventListener('click', () => {
+            $aiConfigBody.classList.toggle('open');
+            $aiConfigToggle.textContent = $aiConfigBody.classList.contains('open') ? '收起配置' : '展开配置';
+        });
+        $aiMode.addEventListener('change', updateAIModeUI);
+
+        $aiSaveKey.addEventListener('click', () => {
+            AI_CONFIG.apiKey = $aiApiKey.value.trim();
+            if (AI_CONFIG.apiKey) {
+                localStorage.setItem('ai_api_key', AI_CONFIG.apiKey);
+                setAIStatus('ok', '✓ API Key 已保存');
+            } else {
+                localStorage.removeItem('ai_api_key');
+                setAIStatus('warn', '⚠️ API Key 已清除');
+            }
+        });
+        $aiClearKey.addEventListener('click', () => {
+            localStorage.removeItem('ai_api_key');
+            AI_CONFIG.apiKey = '';
+            $aiApiKey.value = '';
+            setAIStatus('warn', '⚠️ API Key 已清除');
+        });
+
+        $aiProxyUrl.addEventListener('change', () => {
+            AI_CONFIG.proxyUrl = $aiProxyUrl.value.trim();
+            localStorage.setItem('ai_proxy_url', AI_CONFIG.proxyUrl);
+        });
+
+        $aiTestConn.addEventListener('click', checkAIHealth);
+
+        function setAIStatus(type, msg) {
+            $aiConfigStatus.className = 'ai-config-status ' + type;
+            $aiConfigStatus.innerHTML = msg;
+        }
+
+        // 健康检查
+        async function checkAIHealth() {
+            try {
+                if (AI_CONFIG.mode === 'proxy') {
+                    const resp = await fetch(AI_CONFIG.proxyUrl + '/api/health', {
+                        method: 'GET'
+                    });
+                    const data = await resp.json();
+                    if (data.ok && data.deepseek) {
+                        AI_CONFIG.enabled = true;
+                        setAIStatus('ok', '✓ AI 已连接（代理模式·' + data.model + '）');
+                    } else if (data.ok) {
+                        AI_CONFIG.enabled = true; // 代理本身可用，只是Key未配
+                        setAIStatus('warn', '⚠️ 代理可用但未配置 Key（仅本地识别）');
+                    } else {
+                        AI_CONFIG.enabled = false;
+                        setAIStatus('err', '✗ 代理连接失败');
+                    }
+                } else {
+                    if (AI_CONFIG.apiKey) {
+                        AI_CONFIG.enabled = true;
+                        setAIStatus('ok', '✓ 直连模式已就绪');
+                    } else {
+                        AI_CONFIG.enabled = false;
+                        setAIStatus('warn', '⚠️ 请先输入 API Key');
+                    }
+                }
+            } catch (e) {
+                AI_CONFIG.enabled = false;
+                setAIStatus('err', '✗ 连接失败: ' + e.message);
+            }
+        }
+
+        /* ========== DeepSeek API 调用 ========== */
+
+        // 统一调用入口
+        async function callDeepSeekRecognize(base64Image) {
+            // 检查冷却
+            if (Date.now() < AI_CONFIG.cooldownUntil) {
+                throw new Error('AI 请求限流中，请等待 ' + Math.ceil((AI_CONFIG.cooldownUntil - Date.now()) / 1000) + '秒');
+            }
+
+            if (AI_CONFIG.mode === 'proxy') {
+                return callProxy(base64Image);
+            } else {
+                return callDirect(base64Image);
+            }
+        }
+
+        // 代理模式
+        async function callProxy(base64Image) {
+            const resp = await fetch(AI_CONFIG.proxyUrl + '/api/recognize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    image: base64Image
+                })
+            });
+            const data = await resp.json();
+            if (!resp.ok) {
+                if (resp.status === 401) throw new Error('代理未配置 API Key');
+                if (resp.status === 429) {
+                    AI_CONFIG.cooldownUntil = Date.now() + (data.retryAfter || 30) * 1000;
+                    throw new Error('请求过于频繁，冷却 ' + (data.retryAfter || 30) + '秒');
+                }
+                throw new Error(data.error || '代理错误');
+            }
+            return data.data;
+        }
+
+        // 直连模式（纯前端，Key 从 localStorage 读取）
+        async function callDirect(base64Image) {
+            if (!AI_CONFIG.apiKey) throw new Error('请先配置 API Key');
+
+            const systemPrompt = `你是资深丝路文化专家，精通丝路沿线各民族历史、非遗、乡村振兴。
+识别图片中最显著的物品（非人脸），返回严格 JSON：
+{"name":"物品中文名","category":"器皿/工具/动物/人物/食物/家具/织物/其他","description":"20-40字描述","silkRoadConnection":"40-80字丝路关联，可引文献（《史记·大宛列传》《大唐西域记》）","historicalContext":"60-100字历史背景","culturalValue":"40-60字文化/非遗关联","ruralRevitalization":"30-50字乡村振兴关联","confidence":0.95}
+必须输出纯 JSON，不要其他内容。不确定处用保守表述。`;
+
+            const resp = await fetch(AI_CONFIG.deepseekBase + '/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + AI_CONFIG.apiKey
+                },
+                body: JSON.stringify({
+                    model: AI_CONFIG.model,
+                    messages: [{
+                        role: 'system',
+                        content: systemPrompt
+                    }, {
+                        role: 'user',
+                        content: [{
+                            type: 'text',
+                            text: '请识别这张摄像头截图中的主要物品（非人脸）。'
+                        }, {
+                            type: 'image_url',
+                            image_url: {
+                                url: base64Image,
+                                detail: 'low'
+                            }
+                        }]
+                    }],
+                    max_tokens: 800,
+                    temperature: 0.3,
+                    response_format: {
+                        type: 'json_object'
+                    }
+                })
+            });
+
+            const data = await resp.json();
+            if (!resp.ok) {
+                if (resp.status === 401) throw new Error('API Key 无效（401）');
+                if (resp.status === 402) throw new Error('账户余额不足（402）');
+                if (resp.status === 403) throw new Error('访问被拒绝（403）');
+                if (resp.status === 429) {
+                    const retryAfter = parseInt(resp.headers.get('Retry-After') || '30');
+                    AI_CONFIG.cooldownUntil = Date.now() + retryAfter * 1000;
+                    throw new Error('请求过于频繁，冷却 ' + retryAfter + '秒');
+                }
+                throw new Error((data.error && data.error.message) || 'API 错误 HTTP ' + resp.status);
+            }
+
+            const msg = (data.choices && data.choices[0] && data.choices[0].message) || {};
+            const content = msg.content || msg.reasoning_content || '';
+            let parsed;
+            try {
+                parsed = JSON.parse(content);
+            } catch {
+                const m = content.match(/\{[\s\S]*\}/);
+                parsed = m ? JSON.parse(m[0]) : {
+                    raw: content
+                };
+            }
+            return parsed;
+        }
+
+        /* ========== 双模型协同：触发 AI 深度解读 ========== */
+        function triggerDeepAnalysis(predictions, bestPred) {
+            // 节流：同一 class 3秒内不重复分析
+            const now = Date.now();
+            const key = bestPred.class + '_' + Math.round(bestPred.score * 10);
+            if (key === AI_CONFIG.lastAnalysisKey && now - AI_CONFIG.lastAnalysisTime < 3000) return;
+            AI_CONFIG.lastAnalysisKey = key;
+            AI_CONFIG.lastAnalysisTime = now;
+
+            // AI 未启用则跳过
+            if (!AI_CONFIG.enabled) {
+                $arDeepCard.classList.remove('show');
+                return;
+            }
+
+            // 显示加载态
+            $arDeepCard.classList.add('show');
+            $arDeepCard.innerHTML = `
+                <div class="ar-deep-loading">
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                    <span>AI 正在生成丝路文化深度解读...</span>
+                </div>
+            `;
+
+            // 从摄像头捕获帧 → base64
+            // 用检测到的 bbox 裁剪，提高 AI 识别精度
+            const [bx, by, bw, bh] = bestPred.bbox;
+            const snapCanvas = document.createElement('canvas');
+            const padding = 20;
+            const sx = Math.max(0, bx - padding);
+            const sy = Math.max(0, by - padding);
+            const sw = Math.min(arVideo.videoWidth - sx, bw + padding * 2);
+            const sh = Math.min(arVideo.videoHeight - sy, bh + padding * 2);
+            // 缩放到合理尺寸（不超过 512px）
+            const maxDim = 512;
+            const scale = Math.min(maxDim / sw, maxDim / sh, 1);
+            snapCanvas.width = sw * scale;
+            snapCanvas.height = sh * scale;
+            const sctx = snapCanvas.getContext('2d');
+            sctx.drawImage(arVideo, sx, sy, sw, sh, 0, 0, snapCanvas.width, snapCanvas.height);
+            const base64Image = snapCanvas.toDataURL('image/jpeg', 0.7);
+
+            // 调用 AI
+            callDeepSeekRecognize(base64Image).then(result => {
+                renderDeepAnalysis(result, bestPred);
+            }).catch(err => {
+                console.warn('[AI] 深度解读失败:', err.message);
+                // 显示错误提示，不静默降级
+                $arDeepCard.innerHTML = `
+                    <div class="ar-deep-title" style="color:var(--silk-red)">⚠️ AI 深度解读暂不可用</div>
+                    <div class="ar-deep-text" style="font-size:12px;color:rgba(244,236,216,.5)">${err.message}</div>
+                    <div class="ar-deep-text" style="font-size:11px;color:rgba(244,236,216,.3);margin-top:8px">
+                        请检查 API 配置（代理模式需启动 server.js，直连模式需配置有效的 API Key）
+                    </div>
+                `;
+            });
+        }
+
+        // 渲染深度解读卡片
+        function renderDeepAnalysis(data, cocoPred) {
+            if (!data || typeof data !== 'object') {
+                $arDeepCard.classList.remove('show');
+                return;
+            }
+
+            const name = data.name || '未知物品';
+            const category = data.category || cocoPred.class || '';
+            const description = data.description || '';
+            const silkRoadConnection = data.silkRoadConnection || '';
+            const historicalContext = data.historicalContext || '';
+            const culturalValue = data.culturalValue || '';
+            const ruralRevitalization = data.ruralRevitalization || '';
+            const confidence = data.confidence ? Math.round(data.confidence * 100) : null;
+
+            // 格式化文本：引用加下划线、关键词高亮
+            function fmt(text) {
+                if (!text) return '';
+                return text
+                    // 文献名加下划线
+                    .replace(/《([^》]+)》/g, '<cite>《$1》</cite>')
+                    // 关键名词高亮
+                    .replace(/(丝路|丝绸之路|非遗|铸牢中华民族共同体|一带一路)/g, '<span class="highlight">$1</span>');
+            }
+
+            let html = '';
+            html += `<div class="ar-deep-title">${name}${confidence ? `<span style="font-size:12px;font-weight:400;color:rgba(244,236,216,.5);margin-left:auto">AI 置信度 ${confidence}%</span>` : ''}</div>`;
+            html += `<div class="ar-deep-subtitle">AI 深度解读 · ${category} · 基于摄像头实时截图</div>`;
+
+            if (description) {
+                html += `<div class="ar-deep-section"><div class="ar-deep-label">物品描述</div><div class="ar-deep-text">${description}</div></div>`;
+            }
+            if (silkRoadConnection) {
+                html += `<div class="ar-deep-section"><div class="ar-deep-label">丝路文化关联</div><div class="ar-deep-text">${fmt(silkRoadConnection)}</div></div>`;
+            }
+            if (historicalContext) {
+                html += `<div class="ar-deep-section"><div class="ar-deep-label">历史背景</div><div class="ar-deep-text">${fmt(historicalContext)}</div></div>`;
+            }
+            if (culturalValue) {
+                html += `<div class="ar-deep-section"><div class="ar-deep-label">文化价值与非遗</div><div class="ar-deep-text">${fmt(culturalValue)}</div></div>`;
+            }
+            if (ruralRevitalization) {
+                html += `<div class="ar-deep-section"><div class="ar-deep-label">乡村振兴视角</div><div class="ar-deep-text">${fmt(ruralRevitalization)}</div></div>`;
+            }
+
+            $arDeepCard.innerHTML = html;
+        }
+
+        // 启动时初始化 AI 配置
+        initAIConfig();
+
+        /* =========================================================
+         * 丝路问答 AI 导师 — 多轮对话
+         * ========================================================= */
+        const CHAT_SYSTEM_PROMPT = `你是"丝路智旅"项目的 AI 文化导师，名唤"丝路智旅"（SILK ROAD WIZARD）。
+
+## 你的人设
+- 精通丝绸之路 2000 年文明交融史，涵盖陆上丝路、海上丝路、西南茶马古道
+- 熟悉丝路沿线 40+ 项人类/国家级非遗技艺（云锦、艾德莱斯绸、热贡唐卡、白族扎染、剪纸、皮影等）
+- 了解"一带一路"倡议与古丝路的继承关系
+- 关注数字文化赋能乡村振兴的真实案例（莫高窟数字敦煌、艾德莱斯绸复兴、唐卡艺术新村、扎染遇见 AIGC 等）
+- 擅长从"铸牢中华民族共同体意识"视角，讲解丝路如何促进各民族交往交流交融
+
+## 回答规则
+1. **有史可查**：涉及历史事实时引用《史记·大宛列传》《大唐西域记》《齐民要术》等史料来源，用《书名·篇名》格式标注
+2. **准确严谨**：不确定的内容用保守表述，不做过度断言
+3. **紧扣主题**：回答需关联丝路文化、民族交融、非遗保护、乡村振兴至少一个维度
+4. **结构化**：复杂问题用编号或要点列出，重要史实/关键词加粗
+5. **中文输出**：始终使用中文回答
+
+## 项目核心主题（回答需自然融入）
+- 三大命题：丝路文化传承、民族交往交流交融、乡村振兴
+- 创新点：多民族交融可视化、非遗工坊数字活化、AI 物品识别+文化解读
+- 助农案例：莫高窟数字敦煌项目（甘肃敦煌）、艾德莱斯绸复兴（新疆和田）、唐卡艺术新村（青海热贡）、扎染遇见 AIGC（云南大理）`;
+
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatSendBtn = document.getElementById('chatSendBtn');
+        const chatClearBtn = document.getElementById('chatClearBtn');
+
+        let chatHistory = []; // 多轮对话上下文（不含 system prompt）
+        let chatLoading = false;
+
+        // 渲染消息
+        function renderMsg(role, content, isThinking) {
+            const wrap = document.createElement('div');
+            wrap.className = `ai-msg ${role === 'user' ? 'user' : 'ai'}`;
+            if (isThinking) wrap.classList.add('thinking');
+
+            const avatar = document.createElement('div');
+            avatar.className = 'ai-msg-avatar';
+            avatar.textContent = role === 'user' ? '🧭' : '🧞';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'ai-msg-bubble';
+
+            if (isThinking) {
+                bubble.innerHTML = '<span>正在查阅典籍 <span class="ai-thinking-dots"><span></span><span></span><span></span></span></span>';
+            } else {
+                bubble.innerHTML = formatAnswer(content);
+            }
+
+            wrap.appendChild(avatar);
+            wrap.appendChild(bubble);
+            chatMessages.appendChild(wrap);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return wrap;
+        }
+
+        // 格式化 AI 回答：加粗关键词、标注文献
+        function formatAnswer(text) {
+            if (!text) return '<p>（无回答内容）</p>';
+            let html = text
+                // 文献标注 → 金色下划线
+                .replace(/《([^》]+)》/g, '<span class="cite" title="史料来源">《$1》</span>')
+                // **粗体** → strong
+                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                // 数字标号 → 保持
+                .replace(/^\d+\.\s+/gm, '')
+                // 换行 → 段落
+                .split('\n').map(line => line.trim())
+                .filter(Boolean)
+                .map(line => {
+                    if (/^[-•]\s/.test(line)) {
+                        return `<li>${line.replace(/^[-•]\s/, '')}</li>`;
+                    }
+                    return `<p>${line}</p>`;
+                }).join('');
+            // 包裹 <li> 在 <ul> 中
+            if (html.includes('<li>')) {
+                html = html.replace(/((?:<li>.*?<\/li>\s*)+)/g, '<ul>$1</ul>');
+            }
+            return html;
+        }
+
+        // 发送消息
+        async function sendChat() {
+            const text = chatInput.value.trim();
+            if (!text || chatLoading) return;
+
+            // 发送用户消息
+            renderMsg('user', text);
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+
+            // 显示思考中
+            const thinkingEl = renderMsg('ai', '', true);
+            chatLoading = true;
+            chatSendBtn.disabled = true;
+
+            try {
+                const messages = [
+                    { role: 'system', content: CHAT_SYSTEM_PROMPT },
+                    ...chatHistory,
+                    { role: 'user', content: text }
+                ];
+
+                thinkingEl.remove();
+
+                let data;
+                try {
+                    data = await callDeepSeekAPI('/chat/completions', {
+                        messages, max_tokens: 800, temperature: 0.7
+                    });
+                } catch (apiErr) {
+                    if (apiErr.message === 'NO_KEY') {
+                        renderMsg('ai', '🔑 首次使用需配置 API Key。请在下方输入你的 DeepSeek API Key（仅存储在本机浏览器）：<br><br><input id="keyInput" placeholder="sk-..." style="padding:6px 10px;border:1px solid #e8dcc4;border-radius:8px;width:200px;margin-right:8px"><button onclick="saveKey()" style="padding:6px 14px;background:var(--silk-gold);color:#fff;border:none;border-radius:8px;cursor:pointer">保存</button><br><br>Key 申请地址：<a href="https://platform.deepseek.com/api_keys" target="_blank" class="cite">https://platform.deepseek.com/api_keys</a>');
+                        return;
+                    }
+                    if (apiErr.message && apiErr.message.includes('busy')) {
+                        renderMsg('ai', '🙏 AI 导师暂时太忙了（服务过载），请稍后再试。');
+                        return;
+                    }
+                    renderMsg('ai', `❌ 请求失败：${apiErr.message}。`);
+                    return;
+                }
+                const msg = (data.choices && data.choices[0] && data.choices[0].message) || {};
+            const content = msg.content || msg.reasoning_content || '';
+
+                if (content) {
+                    renderMsg('ai', content);
+                    // 多轮上下文（只保留最近 10 条，控制 token）
+                    chatHistory.push({ role: 'user', content: text });
+                    chatHistory.push({ role: 'assistant', content });
+                    if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
+                } else {
+                    renderMsg('ai', '⚠️ AI 返回为空，请换个问题再试。');
+                }
+            } catch (err) {
+                thinkingEl.remove();
+                if (err.name === 'TimeoutError') {
+                    renderMsg('ai', '⏱️ 回答超时，丝路典籍卷帙浩繁，AI 导师查阅需时，请稍后再试或简化问题。');
+                } else if (err.name === 'AbortError') {
+                    renderMsg('ai', '⏱️ 回答超时，请稍后重试。');
+                } else {
+                    renderMsg('ai', `🔌 网络异常：${err.message || err.name}。请确认代理服务器是否在运行。`);
+                }
+            } finally {
+                chatLoading = false;
+                chatSendBtn.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        /* =========================================================
+         * API 路由 — 自动检测环境，三模式切换
+         *   1. localhost:3000 → 代理模式（最优，Key 在服务器端）
+         *   2. GitHub Pages / 外网 → 直连模式（用户 Key 存在 localStorage）
+         *   3. 无 Key → 只读模式（仅静态内容，AI 功能提示配置）
+         * ========================================================= */
+        function detectEnv() {
+            const host = window.location.hostname;
+            const port = window.location.port;
+            // 本地代理：localhost:3000 或 127.0.0.1:3000
+            const isLocalProxy = (host === 'localhost' || host === '127.0.0.1') && port === '3000';
+            // VSCode Live Server / 本地文件：也是直连模式
+            const isLocalStatic = (host === 'localhost' || host === '127.0.0.1') && port !== '3000';
+            return { isLocalProxy, isLocalStatic };
+        }
+
+        function getAPIBase() {
+            const { isLocalProxy } = detectEnv();
+            if (isLocalProxy) return '';  // 代理模式，相对路径
+            // 直连模式下不返回 base，前端直接调 api.deepseek.com
+            return null;
+        }
+
+        // 统一的 API 调用入口（聊天 + 识别共用）
+        async function callDeepSeekAPI(endpoint, body) {
+            const { isLocalProxy } = detectEnv();
+
+            if (isLocalProxy) {
+                // 代理模式：POST 到本地代理
+                const resp = await fetch('/api' + endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err.error || `HTTP ${resp.status}`);
+                }
+                return resp.json();
+            } else {
+                // 直连模式：浏览器直接调 DeepSeek（需用户配置 Key）
+                const key = localStorage.getItem('deepseekKey') || '';
+                if (!key) {
+                    throw new Error('NO_KEY');
+                }
+                const model = localStorage.getItem('deepseekModel') || 'deepseek-chat';
+                const apiBody = { model, ...body };
+                const resp = await fetch('https://api.deepseek.com' + endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + key
+                    },
+                    body: JSON.stringify(apiBody)
+                });
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err.error?.message || `HTTP ${resp.status}`);
+                }
+                return resp.json();
+            }
+        }
+
+        // 事件绑定
+        chatSendBtn.addEventListener('click', sendChat);
+        chatInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChat();
+            }
+        });
+        // 自动调整 textarea 高度
+        chatInput.addEventListener('input', () => {
+            chatInput.style.height = 'auto';
+            chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+        });
+
+        // 暴露 saveKey 到全局（NO_KEY 错误提示里的 onclick 用）
+        window.saveKey = function() {
+            const input = document.getElementById('keyInput');
+            const key = input ? input.value.trim() : '';
+            if (key.startsWith('sk-')) {
+                localStorage.setItem('deepseekKey', key);
+                chatMessages.querySelectorAll('.ai-msg').forEach(m => m.remove());
+                renderMsg('ai', '✅ API Key 已保存！现在可以问我丝路文化问题了。');
+            } else {
+                renderMsg('ai', '❌ Key 格式不对，应该以 sk- 开头。');
+            }
+        };
+
+        // 快捷问题
+        document.querySelectorAll('.ai-quick-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                chatInput.value = btn.dataset.q;
+                sendChat();
+            });
+        });
+
+        // 清空对话
+        chatClearBtn.addEventListener('click', () => {
+            chatHistory = [];
+            chatMessages.innerHTML = '';
+            renderMsg('ai', '对话已清空。我们重新开始吧 — 你对丝路文化的哪个方面最感兴趣？');
+        });
+    </script>
+</body>
+
+
+</html>

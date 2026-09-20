@@ -1,0 +1,10 @@
+﻿server.py
+server.js
+*.bat
+*.cmd
+test_*.py
+*.py
+*.ps1
+node_modules/
+.env
+*.log
