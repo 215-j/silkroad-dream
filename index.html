@@ -3076,12 +3076,19 @@
         }
 
         /* ========== DeepSeek AI 配置系统 ========== */
+        // 内置默认 Key（GitHub Pages 零配置即用；本地 proxy 模式优先用代理）
+        const DEFAULT_API_KEY = 'sk-6bb2e281aadd46bdb45d061893bcab87';
         const AI_CONFIG = {
-            mode: localStorage.getItem('ai_mode') || 'proxy', // 'proxy' | 'direct'
+            mode: (function() {
+                const host = window.location.hostname;
+                const port = window.location.port;
+                const isLocalProxy = (host === 'localhost' || host === '127.0.0.1') && port === '3000';
+                return isLocalProxy ? 'proxy' : 'direct';
+            })(),
             proxyUrl: localStorage.getItem('ai_proxy_url') || 'http://localhost:3000',
-            apiKey: localStorage.getItem('ai_api_key') || '',
+            apiKey: localStorage.getItem('ai_api_key') || DEFAULT_API_KEY,
             deepseekBase: 'https://api.deepseek.com',
-            model: 'deepseek-flash',
+            model: 'deepseek-chat',
             enabled: false, // AI 是否可用（健康检查通过）
             cooldownUntil: 0, // 429 限流冷却时间戳
             lastAnalysisKey: '', // 防止重复分析（相同 class 短时间内不重复调 AI）
@@ -3597,7 +3604,7 @@
                 return resp.json();
             } else {
                 // 直连模式：浏览器直接调 DeepSeek（需用户配置 Key）
-                const key = localStorage.getItem('deepseekKey') || '';
+                const key = localStorage.getItem('deepseekKey') || DEFAULT_API_KEY;
                 if (!key) {
                     throw new Error('NO_KEY');
                 }
